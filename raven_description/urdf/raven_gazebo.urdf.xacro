@@ -1,0 +1,306 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="RealsenseGazebo" params="cam_name">
+
+    <!-- depth cam -->
+    <gazebo reference="${cam_name}_link">
+      <material>Gazebo/Black</material>
+    </gazebo>
+    <gazebo reference="${cam_name}_color_frame"/>
+    <gazebo reference="${cam_name}_color_optical_frame"/>
+    <gazebo reference="${cam_name}_depth_frame"/>
+    <gazebo reference="${cam_name}_depth_optical_frame"/>
+
+    <gazebo reference="${cam_name}_joint" />
+    <gazebo reference="${cam_name}_color_joint" />
+    <gazebo reference="${cam_name}_depth_joint" />
+    <gazebo reference="${cam_name}_color_optical_joint" />
+    <gazebo reference="${cam_name}_depth_optical_joint" />
+
+    <!-- generate the RGB camera image -->
+    <gazebo reference="cam_rgb_frame">
+        <sensor name="cam_rgb" type="camera">
+            <always_on>true</always_on>
+            <visualize>true</visualize>
+            <update_rate>15</update_rate>
+            <camera name="cam_rgb">
+                <horizontal_fov>1.085595</horizontal_fov>
+                <image>
+                    <width>1280</width>
+                    <height>960</height>
+                    <format>RGB8</format>
+                </image>
+                <clip>
+                    <near>0.03</near>
+                    <far>1000</far>
+                </clip>
+                <noise>
+                    <type>gaussian</type>
+                    <!-- Noise is sampled independently per pixel on each frame.
+                        That pixel's noise value is added to each of its color
+                        channels, which at that point lie in the range [0,1]. -->
+                    <mean>0.0</mean>
+                    <stddev>0.007</stddev>
+                </noise>
+            </camera>
+            <plugin name="cam_rgb_driver" filename="libgazebo_ros_camera.so">
+                <ros>
+                <!-- <namespace></namespace> -->
+
+                    <!-- 
+                    <remapping>${cam_name}/image_raw:=cam_rgb/image_raw</remapping>
+                    <remapping>${cam_name}/image_raw/compressed:=${cam_name}/color/image_raw/compressed</remapping>
+                    <remapping>${cam_name}/image_raw/theora:=${cam_name}/color/image_raw/theora</remapping>
+                    <remapping>${cam_name}/image_raw/compressedDepth:=${cam_name}/color/image_raw/compressedDepth</remapping>
+
+                    <remapping>${cam_name}/camera_info:=${cam_name}/color/camera_info</remapping>
+                    -->
+                </ros>
+
+                <!-- Set camera name. If empty, defaults to sensor name (i.e. "sensor_name") -->
+                <camera_name>cam_rgb</camera_name>
+
+                <!-- camera_name>omit so it defaults to sensor name</camera_name-->
+                <frame_name>cam_rgb_frame</frame_name>
+
+            </plugin>
+        </sensor>
+    </gazebo>
+
+    <!--  Add an RGBD camera -->
+    <gazebo reference="${cam_name}_link">
+      <sensor name="${cam_name}" type="depth">
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <update_rate>15</update_rate>
+        <camera name="${cam_name}">
+          <horizontal_fov>1.085595</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>Z16</format>
+          </image>
+          <clip>
+            <near>0.04</near>
+            <far>2.0</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <!-- Noise is sampled independently per pixel on each frame.
+                            That pixel's noise value is added to each of its color
+                            channels, which at that point lie in the range [0,1]. -->
+            <mean>0.0</mean>
+            <stddev>0.07</stddev>
+          </noise>
+        </camera>
+        <plugin name="${cam_name}_driver" filename="libgazebo_ros_camera.so">
+          <ros>
+
+            <remapping>${cam_name}/image_raw:=${cam_name}/color/image_raw</remapping>
+            <remapping>${cam_name}/image_raw/compressed:=${cam_name}/color/image_raw/compressed</remapping>
+            <remapping>${cam_name}/image_raw/theora:=${cam_name}/color/image_raw/theora</remapping>
+            <remapping>${cam_name}/image_raw/compressedDepth:=${cam_name}/color/image_raw/compressedDepth</remapping>
+            <remapping>${cam_name}/camera_info:=${cam_name}/color/camera_info</remapping>
+
+
+            <remapping>${cam_name}/depth/image_raw:=${cam_name}/depth/image_rect_raw</remapping>
+            <remapping>${cam_name}/depth/image_raw/compressed:=${cam_name}/depth/image_rect_raw/compressed</remapping>
+            <remapping>${cam_name}/depth/image_raw/theora:=${cam_name}/depth/image_rect_raw/theora</remapping>
+            <remapping>${cam_name}/depth/image_raw/compressedDepth:=${cam_name}/depth/image_rect_raw/compressedDepth</remapping>
+
+
+            <!-- remapping>${cam_name}/camera_info_depth:=${cam_name}/depth/camera_info</remapping -->
+
+            <remapping>${cam_name}/points:=${cam_name}/depth/color/points</remapping>
+          </ros>
+          <camera_name>${cam_name}</camera_name>
+
+          <frame_name>${cam_name}_depth_optical_frame</frame_name>
+          <hack_baseline>0.07</hack_baseline>
+          <min_depth>0.4</min_depth>
+          <max_depth>2.0</max_depth>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+  </xacro:macro>
+
+  <xacro:RealsenseGazebo cam_name="d435_left" />
+  <!--xacro:RealsenseGazebo cam_name="d435_right" /-->
+
+  <gazebo reference="base_link">
+    <material>
+    Gazebo/DarkGrey
+    </material>
+  </gazebo>
+
+  <gazebo reference="scan">
+    <!-- ray sensor -->
+    <sensor name="sensor_ray" type="ray">
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1.0</resolution>
+            <min_angle>0</min_angle>
+            <max_angle>6.28</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.05</min>
+          <max>10.0</max>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.02</stddev>
+        </noise>
+      </ray>
+      <always_on>true</always_on>
+      <update_rate>3.0</update_rate>
+
+      <plugin name="laserscan" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <!-- <namespace>/</namespace> -->
+          <remapping>~/out:=/scan</remapping>
+        </ros>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frame_name>scan</frame_name>
+
+      </plugin>
+      <visualize>1</visualize>
+    </sensor>
+    <material>
+    Gazebo/Black  
+    </material>
+  </gazebo>
+
+  <gazebo reference="front_left_wheel_link">
+    <mu1>200.0</mu1>
+    <mu2>100.0</mu2>
+    <kp>1000000.0</kp>
+    <kd>1.0</kd>
+    <max_vel>0.01</max_vel>
+    <min_depth>0.001</min_depth>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="front_right_wheel_link">
+    <mu1>200.0</mu1>
+    <mu2>100.0</mu2>
+    <kp>1000000.0</kp>
+    <kd>1.0</kd>
+    <max_vel>0.01</max_vel>
+    <min_depth>0.001</min_depth>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="lcaster_wheel_link">
+    <mu1>0.00000</mu1>
+    <mu2>0.00000</mu2>
+    <!-- kp>100000.0</kp>
+    <kd>1.0</kd  -->
+    <max_vel>0.001</max_vel>
+    <min_depth>0.0001</min_depth>
+    <material>Gazebo/Red</material>
+  </gazebo>
+
+  <gazebo reference="scan">
+
+    <!-- ray sensor -->
+    <sensor name="sensor_ray" type="ray">
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1.0</resolution>
+            <min_angle>-1.369263</min_angle>
+            <max_angle>1.369263</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.05</min>
+          <max>10.0</max>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.02</stddev>
+        </noise>
+      </ray>
+      <always_on>true</always_on>
+      <update_rate>15.0</update_rate>
+
+      <plugin name="laserscan" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <namespace>/simbot</namespace>
+          <remapping>~/out:=/scan_raw</remapping>
+        </ros>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frame_name>scan</frame_name>
+
+      </plugin>
+      <visualize>1</visualize>
+    </sensor>
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <gazebo reference="rcaster_wheel_link">
+    <mu1>0.00000</mu1>
+    <mu2>0.00000</mu2>
+    <!-- kp>100000.0</kp>
+    <kd>1.0</kd  -->
+    <max_vel>0.001</max_vel>
+    <min_depth>0.0001</min_depth>
+    <material>Gazebo/Red</material>
+  </gazebo>
+
+  <gazebo>
+    <plugin name='diff_drive_simbot' filename='libgazebo_ros_diff_drive.so'>
+
+      <ros>
+        <namespace>/simbot</namespace>
+        <remapping>cmd_vel:=/cmd_vel</remapping>
+        <remapping>odom:=/odom</remapping>
+
+      </ros>
+
+      <!-- wheels -->
+      <left_joint>front_left_wheel</left_joint>
+      <right_joint>front_right_wheel</right_joint>
+
+      <!-- kinematics -->
+      <wheel_separation>0.345</wheel_separation>
+      <wheel_diameter>0.2</wheel_diameter>
+
+      <update_rate>100.0</update_rate>
+
+      <!-- limits -->
+      <max_wheel_torque>8.0</max_wheel_torque>
+      <max_wheel_acceleration>1.0</max_wheel_acceleration>
+
+      <!-- output -->
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_wheel_tf>true</publish_wheel_tf>
+
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+
+    </plugin>
+    <plugin name="gazebo_ros_joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
+      <ros>
+        <!-- Add a namespace -->
+        <namespace>/simbot</namespace>
+        <!-- Remap the default topic -->
+        <remapping>joint_states:=/base_wheel_joints</remapping>
+      </ros>
+      <!-- Update rate in Hertz -->
+      <update_rate>500</update_rate>
+      <!-- Name of joints in the model whose states will be published. -->
+      <joint_name>front_left_wheel</joint_name>
+      <joint_name>front_right_wheel</joint_name>
+    </plugin>
+  </gazebo>
+
+</robot>

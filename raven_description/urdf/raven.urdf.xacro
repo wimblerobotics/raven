@@ -1,0 +1,190 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="ravel">
+    <xacro:include filename="$(find raven_description)/urdf/caster.urdf.xacro" />
+    <xacro:include filename="$(find raven_description)/urdf/material.urdf.xacro" />
+    <xacro:include filename="$(find raven_description)/urdf/wheel.urdf.xacro" />
+    <!-- <xacro:include filename="$(find raven_description)/urdf/raven_gazebo.urdf.xacro" /> -->
+
+    <xacro:property name="M_PI" value="3.14159" />
+
+    <xacro:property name="body_height" value="0.262" />
+    <xacro:property name="body_length" value="0.6096" />
+    <xacro:property name="body_width" value="0.305" />
+
+    <xacro:property name="caster_radius" value="0.037" />
+    <xacro:property name="caster_width" value="0.030" />
+    <xacro:property name="d435_y_offset" value="0.077" />
+    <xacro:property name="fwheel_offset" value="-0.325" />
+    <xacro:property name="gear_box_center_height" value="0.015" />
+    <xacro:property name="ldlidar_height" value="0.035" />
+    <xacro:property name="ldlidar_radius" value="0.034" />
+    <xacro:property name="ldlidar_left_front_x_offset" value="0.197" />
+    <xacro:property name="ldlidar_left_front_y_offset" value="0.193" />
+    <xacro:property name="ldlidar_left_front_z_offset" value="0.203" />
+    <xacro:property name="ldlidar_right_rear_x_offset" value="-0.400" />
+    <xacro:property name="ldlidar_right_rear_y_offset" value="-0.188" />
+    <xacro:property name="ldlidar_right_rear_z_offset" value="0.120" />
+    <xacro:property name="ldlidar_z_offset" value="-0.003" />
+    <xacro:property name="stereo_plate_x_offset" value="0.180" />
+    <xacro:property name="stereo_plate_z_offset" value="0.140" />
+    <xacro:property name="t265_height" value="0.016" />
+    <xacro:property name="t265_length" value="0.100" />
+    <xacro:property name="t265_width" value="0.008" />
+    <xacro:property name="t265_x_offset" value="0.200" />
+    <xacro:property name="wheel_radius" value="0.10" />
+    <xacro:property name="wheel_center_offset" value="0.030" />
+    <xacro:property name="wheel_width" value="0.0254" />
+
+    <xacro:property name="base_to_floor_z_offset" value="${wheel_radius+gear_box_center_height}" />
+    <xacro:property name="t265_z_offset" value="${base_to_floor_z_offset+0.175}" />
+
+    <xacro:property name="wheel_offset_from_front" value="0.190" />
+
+    <link name="base_link">
+        <collision>
+            <geometry>
+                <box size="${body_length} ${body_width} ${body_height}" />
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 ${(body_height/2)}" />
+        </collision>
+        <visual>
+            <geometry>
+                <box size="${body_length} ${body_width} ${body_height}" />
+            </geometry>
+            <material name="aluminum_frame" />
+            <origin rpy="0 0 0" xyz="${(-body_length/2)+wheel_offset_from_front} 0 ${(body_height/2)}" />
+        </visual>
+    </link>
+
+    <link name="base_footprint" />
+
+    <joint name="base_footprint_joint" type="fixed">
+        <origin xyz="0 0 ${base_to_floor_z_offset}" rpy="0 0 0" />
+        <parent link="base_footprint" />
+        <child link="base_link" />
+    </joint>
+
+    <xacro:wheel wheel_prefix="front_left">
+        <origin xyz="0 ${(body_width/2)+wheel_center_offset} -${gear_box_center_height}" rpy="0 0 0" />
+    </xacro:wheel>
+
+    <xacro:wheel wheel_prefix="front_right">
+        <origin xyz="0 -${(body_width/2)+wheel_center_offset} -${gear_box_center_height}" rpy="0 0 0" />
+    </xacro:wheel>
+
+    <xacro:caster wheel_prefix="lcaster">
+        <origin xyz="${fwheel_offset} 0.100 -0.078" rpy="0 0 0" />
+    </xacro:caster>
+    <xacro:caster wheel_prefix="rcaster">
+        <origin xyz="${fwheel_offset} -0.080 -0.078" rpy="0 0 0" />
+    </xacro:caster>
+
+    <!-- ldLidars-->
+    <link name="lidar_frame_right_rear">
+        <collision>
+            <geometry>
+                <cylinder length="${ldlidar_height}" radius="${ldlidar_radius}" />
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="1" />
+            <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+        </inertial>
+        <visual>
+            <geometry>
+                <cylinder length="${ldlidar_height}" radius="${ldlidar_radius}" />
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+            <material name="blackish" />
+        </visual>
+    </link>
+
+    <joint name="base_to_lidar_frame_right_rear" type="fixed">
+        <parent link="base_link" />
+        <child link="lidar_frame_right_rear" />
+        <origin xyz="${ldlidar_right_rear_x_offset} ${ldlidar_right_rear_y_offset} ${ldlidar_right_rear_z_offset + ldlidar_height + ldlidar_z_offset}" rpy="0 0 ${M_PI/2.0}" />
+    </joint>
+
+    <link name="lidar_frame_left_front">
+        <collision>
+            <geometry>
+                <cylinder length="${ldlidar_height}" radius="${ldlidar_radius}" />
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="1" />
+            <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+        </inertial>
+        <visual>
+            <geometry>
+                <cylinder length="${ldlidar_height}" radius="${ldlidar_radius}" />
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+            <material name="blackish" />
+        </visual>
+    </link>
+
+    <joint name="base_to_lidar_frame_left_front" type="fixed">
+        <parent link="base_link" />
+        <child link="lidar_frame_left_front" />
+        <origin xyz="${ldlidar_left_front_x_offset} ${ldlidar_left_front_y_offset} ${ldlidar_left_front_z_offset + ldlidar_height + ldlidar_z_offset}" rpy="0 0 ${-M_PI/2.0}" />
+    </joint>
+
+    <!-- Stereo depth cameras-->
+    <xacro:include filename="$(find raven_description)/urdf/d435.urdf.xacro" />
+    <xacro:sensor_d435 parent="base_link" name="d435_left">
+        <origin xyz="${stereo_plate_x_offset} ${d435_y_offset} ${stereo_plate_z_offset}" rpy="0 0 0.35" />
+    </xacro:sensor_d435>
+
+    <xacro:sensor_d435 parent="base_link" name="d435_right">
+        <origin xyz="${stereo_plate_x_offset} ${-d435_y_offset} ${stereo_plate_z_offset}" rpy="0 0 -0.36" />
+    </xacro:sensor_d435>
+
+    <!-- <joint name="d435_left_to_base_footprint" type="fixed">
+        <parent link="d435_left" />
+        <child link="d435_left_link" />
+        <origin xyz="${stereo_plate_x_offset} ${d435_y_offset} ${stereo_plate_z_offset}" rpy="0 0 0.35" />
+    </joint> -->
+
+    <!-- T265 y tilt is 31 degrees or 0.541 radians -->
+    <!-- Visual odometry camera -->
+    <link name="t265_pose_frame">
+        <collision>
+            <geometry>
+                <box size="${t265_width} ${t265_length} ${t265_height}" />
+                <origin xyz="0 0 0" rpy="0.0 -0.0 0.0" />
+            </geometry>
+        </collision>
+        <visual>
+            <geometry>
+                <box size="${t265_width} ${t265_length} ${t265_height}" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0.0 -0.0 0.0" />
+            <material name="t265_material" />
+        </visual>
+    </link>
+
+    <joint name="t265_to_base_footprint" type="fixed">
+        <parent link="t265_rotate_frame" />
+        <child link="base_footprint" />
+        <origin xyz="-${t265_x_offset} 0 -${t265_z_offset}" rpy="0 0 0" />
+         <!--
+        <child link="base_footprint" />
+        <origin xyz="-${t265_x_offset} 0 -${t265_z_offset}" rpy="0 0.541 0 " />
+        -->
+    </joint>
+
+    <link name="t265_rotate_frame" />
+    <joint name="t265_rotator_joint" type="fixed">
+        <parent link="t265_pose_frame" />
+        <child link="t265_rotate_frame" />
+        <origin xyz="0 0 0" rpy="0 0.541 0 " />
+    </joint>
+
+    <xacro:include filename="$(find raven_description)/urdf/time_of_flight.urdf.xacro" />
+    <xacro:include filename="$(find raven_description)/urdf/sonar.urdf.xacro" />
+</robot>
