@@ -1,4 +1,4 @@
 joint_state_publisher:
   ros__parameters:
     rate: 20
-    source_list: ['/puck_joint_states']
+    source_list: ['/raven_joint_states']
