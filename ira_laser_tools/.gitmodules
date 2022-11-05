@@ -1,0 +1,4 @@
+[submodule "src/perception_pcl"]
+	path = src/perception_pcl
+	url = https://github.com/relffok/perception_pcl.git
+	version = galactic-devel
