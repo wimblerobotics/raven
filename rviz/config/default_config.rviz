@@ -10,6 +10,7 @@ Panels:
         - /lidar_frame_right_rear1/Topic1
         - /Map1/Topic1
         - /Map1/Update Topic1
+        - /Amcl Particle Swarm1/Topic1
         - /Realsense1/RealsenseCamera1
         - /Realsense1/RealsenseCamera1/Topic1
         - /Realsense1/RealsenseDepthImage1
@@ -19,8 +20,7 @@ Panels:
         - /Odometry1/Shape1
         - /Cost cloud1/Topic1
         - /Image1/Topic1
-        - /SonarGroup1/sonar3Sensor1
-        - /SonarGroup1/sonar3Sensor1/Topic1
+        - /Global footprint1
       Splitter Ratio: 0.41206029057502747
     Tree Height: 289
   - Class: rviz_common/Selection
@@ -233,7 +233,7 @@ Visualization Manager:
       Color: 0; 255; 0
       Color Transformer: FlatColor
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 246
@@ -254,7 +254,7 @@ Visualization Manager:
         Value: /scan_right_rear
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -267,7 +267,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: AxisColor
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 246
@@ -288,7 +288,7 @@ Visualization Manager:
         Value: /scan_left_front
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -327,7 +327,7 @@ Visualization Manager:
       Class: rviz_default_plugins/Map
       Color Scheme: map
       Draw Behind: true
-      Enabled: true
+      Enabled: false
       Name: Map
       Topic:
         Depth: 1
@@ -343,12 +343,12 @@ Visualization Manager:
         Reliability Policy: Best Effort
         Value: /map_updates
       Use Timestamp: false
-      Value: true
-    - Alpha: 0.4000000059604645
+      Value: false
+    - Alpha: 0.20000000298023224
       Class: rviz_default_plugins/Map
       Color Scheme: costmap
       Draw Behind: true
-      Enabled: true
+      Enabled: false
       Name: Global costmap
       Topic:
         Depth: 5
@@ -364,7 +364,7 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /global_costmap/costmap_updates
       Use Timestamp: false
-      Value: true
+      Value: false
     - Alpha: 0.699999988079071
       Class: rviz_default_plugins/Map
       Color Scheme: costmap
@@ -386,6 +386,182 @@ Visualization Manager:
         Value: /local_costmap/costmap_updates
       Use Timestamp: false
       Value: true
+    - Class: rviz_common/Group
+      Displays:
+        - Alpha: 0.5
+          Buffer Length: 1
+          Class: rviz_default_plugins/Range
+          Color: 245; 121; 0
+          Enabled: true
+          Name: sonar3Sensor
+          Topic:
+            Depth: 5
+            Durability Policy: Volatile
+            Filter size: 10
+            History Policy: Keep Last
+            Reliability Policy: Best Effort
+            Value: /sonar3Sensor
+          Value: true
+        - Alpha: 0.5
+          Buffer Length: 1
+          Class: rviz_default_plugins/Range
+          Color: 245; 121; 0
+          Enabled: true
+          Name: sonar2Sensor
+          Topic:
+            Depth: 5
+            Durability Policy: Volatile
+            Filter size: 10
+            History Policy: Keep Last
+            Reliability Policy: Best Effort
+            Value: /sonar2Sensor
+          Value: true
+        - Alpha: 0.5
+          Buffer Length: 1
+          Class: rviz_default_plugins/Range
+          Color: 245; 121; 0
+          Enabled: true
+          Name: sonar1Sensor
+          Topic:
+            Depth: 5
+            Durability Policy: Volatile
+            Filter size: 10
+            History Policy: Keep Last
+            Reliability Policy: Best Effort
+            Value: /sonar1Sensor
+          Value: true
+        - Alpha: 0.5
+          Buffer Length: 1
+          Class: rviz_default_plugins/Range
+          Color: 245; 121; 0
+          Enabled: true
+          Name: sonar0Sensor
+          Topic:
+            Depth: 5
+            Durability Policy: Volatile
+            Filter size: 10
+            History Policy: Keep Last
+            Reliability Policy: Best Effort
+            Value: /sonar0Sensor
+          Value: true
+      Enabled: false
+      Name: SonarGroup
+    - Class: rviz_common/Group
+      Displays:
+        - Alpha: 0.5
+          Buffer Length: 1
+          Class: rviz_default_plugins/Range
+          Color: 237; 212; 0
+          Enabled: true
+          Name: tof0Sensor
+          Topic:
+            Depth: 5
+            Durability Policy: Volatile
+            Filter size: 10
+            History Policy: Keep Last
+            Reliability Policy: Best Effort
+            Value: /tof0Sensor
+          Value: true
+        - Alpha: 0.5
+          Buffer Length: 1
+          Class: rviz_default_plugins/Range
+          Color: 237; 212; 0
+          Enabled: true
+          Name: tof1Sensor
+          Topic:
+            Depth: 5
+            Durability Policy: Volatile
+            Filter size: 10
+            History Policy: Keep Last
+            Reliability Policy: Best Effort
+            Value: /tof1Sensor
+          Value: true
+        - Alpha: 0.5
+          Buffer Length: 1
+          Class: rviz_default_plugins/Range
+          Color: 237; 212; 0
+          Enabled: true
+          Name: tof2Sensor
+          Topic:
+            Depth: 5
+            Durability Policy: Volatile
+            Filter size: 10
+            History Policy: Keep Last
+            Reliability Policy: Best Effort
+            Value: /tof2Sensor
+          Value: true
+        - Alpha: 0.5
+          Buffer Length: 1
+          Class: rviz_default_plugins/Range
+          Color: 237; 212; 0
+          Enabled: true
+          Name: tof3Sensor
+          Topic:
+            Depth: 5
+            Durability Policy: Volatile
+            Filter size: 10
+            History Policy: Keep Last
+            Reliability Policy: Best Effort
+            Value: /tof3Sensor
+          Value: true
+        - Alpha: 0.5
+          Buffer Length: 1
+          Class: rviz_default_plugins/Range
+          Color: 237; 212; 0
+          Enabled: true
+          Name: tof4Sensor
+          Topic:
+            Depth: 5
+            Durability Policy: Volatile
+            Filter size: 10
+            History Policy: Keep Last
+            Reliability Policy: Best Effort
+            Value: /tof4Sensor
+          Value: true
+        - Alpha: 0.5
+          Buffer Length: 1
+          Class: rviz_default_plugins/Range
+          Color: 237; 212; 0
+          Enabled: true
+          Name: tof5Sensor
+          Topic:
+            Depth: 5
+            Durability Policy: Volatile
+            Filter size: 10
+            History Policy: Keep Last
+            Reliability Policy: Best Effort
+            Value: /tof5Sensor
+          Value: true
+        - Alpha: 0.5
+          Buffer Length: 1
+          Class: rviz_default_plugins/Range
+          Color: 237; 212; 0
+          Enabled: true
+          Name: tof6Sensor
+          Topic:
+            Depth: 5
+            Durability Policy: Volatile
+            Filter size: 10
+            History Policy: Keep Last
+            Reliability Policy: Best Effort
+            Value: /tof6Sensor
+          Value: true
+        - Alpha: 0.5
+          Buffer Length: 1
+          Class: rviz_default_plugins/Range
+          Color: 237; 212; 0
+          Enabled: true
+          Name: tof7Sensor
+          Topic:
+            Depth: 5
+            Durability Policy: Volatile
+            Filter size: 10
+            History Policy: Keep Last
+            Reliability Policy: Best Effort
+            Value: /tof7Sensor
+          Value: true
+      Enabled: false
+      Name: TofGroup
     - Alpha: 1
       Arrow Length: 0.019999999552965164
       Axes Length: 0.30000001192092896
@@ -800,9 +976,9 @@ Visualization Manager:
       Value: true
     - Alpha: 1
       Class: rviz_default_plugins/Polygon
-      Color: 25; 255; 0
-      Enabled: false
-      Name: Polygon
+      Color: 158; 180; 90
+      Enabled: true
+      Name: Global footprint
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -810,12 +986,12 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /global_costmap/published_footprint
-      Value: false
+      Value: true
     - Alpha: 1
       Class: rviz_default_plugins/Polygon
       Color: 25; 255; 0
-      Enabled: false
-      Name: Polygon
+      Enabled: true
+      Name: Local footprint
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -823,186 +999,10 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /local_costmap/published_footprint
-      Value: false
-    - Class: rviz_common/Group
-      Displays:
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz_default_plugins/Range
-          Color: 245; 121; 0
-          Enabled: true
-          Name: sonar3Sensor
-          Topic:
-            Depth: 5
-            Durability Policy: Volatile
-            Filter size: 10
-            History Policy: Keep Last
-            Reliability Policy: Best Effort
-            Value: /sonar3Sensor
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz_default_plugins/Range
-          Color: 245; 121; 0
-          Enabled: true
-          Name: sonar2Sensor
-          Topic:
-            Depth: 5
-            Durability Policy: Volatile
-            Filter size: 10
-            History Policy: Keep Last
-            Reliability Policy: Best Effort
-            Value: /sonar2Sensor
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz_default_plugins/Range
-          Color: 245; 121; 0
-          Enabled: true
-          Name: sonar1Sensor
-          Topic:
-            Depth: 5
-            Durability Policy: Volatile
-            Filter size: 10
-            History Policy: Keep Last
-            Reliability Policy: Best Effort
-            Value: /sonar1Sensor
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz_default_plugins/Range
-          Color: 245; 121; 0
-          Enabled: true
-          Name: sonar0Sensor
-          Topic:
-            Depth: 5
-            Durability Policy: Volatile
-            Filter size: 10
-            History Policy: Keep Last
-            Reliability Policy: Best Effort
-            Value: /sonar0Sensor
-          Value: true
-      Enabled: true
-      Name: SonarGroup
-    - Class: rviz_common/Group
-      Displays:
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz_default_plugins/Range
-          Color: 237; 212; 0
-          Enabled: true
-          Name: tof0Sensor
-          Topic:
-            Depth: 5
-            Durability Policy: Volatile
-            Filter size: 10
-            History Policy: Keep Last
-            Reliability Policy: Best Effort
-            Value: /tof0Sensor
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz_default_plugins/Range
-          Color: 237; 212; 0
-          Enabled: true
-          Name: tof1Sensor
-          Topic:
-            Depth: 5
-            Durability Policy: Volatile
-            Filter size: 10
-            History Policy: Keep Last
-            Reliability Policy: Best Effort
-            Value: /tof1Sensor
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz_default_plugins/Range
-          Color: 237; 212; 0
-          Enabled: true
-          Name: tof2Sensor
-          Topic:
-            Depth: 5
-            Durability Policy: Volatile
-            Filter size: 10
-            History Policy: Keep Last
-            Reliability Policy: Best Effort
-            Value: /tof2Sensor
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz_default_plugins/Range
-          Color: 237; 212; 0
-          Enabled: true
-          Name: tof3Sensor
-          Topic:
-            Depth: 5
-            Durability Policy: Volatile
-            Filter size: 10
-            History Policy: Keep Last
-            Reliability Policy: Best Effort
-            Value: /tof3Sensor
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz_default_plugins/Range
-          Color: 237; 212; 0
-          Enabled: true
-          Name: tof4Sensor
-          Topic:
-            Depth: 5
-            Durability Policy: Volatile
-            Filter size: 10
-            History Policy: Keep Last
-            Reliability Policy: Best Effort
-            Value: /tof4Sensor
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz_default_plugins/Range
-          Color: 237; 212; 0
-          Enabled: true
-          Name: tof5Sensor
-          Topic:
-            Depth: 5
-            Durability Policy: Volatile
-            Filter size: 10
-            History Policy: Keep Last
-            Reliability Policy: Best Effort
-            Value: /tof5Sensor
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz_default_plugins/Range
-          Color: 237; 212; 0
-          Enabled: true
-          Name: tof6Sensor
-          Topic:
-            Depth: 5
-            Durability Policy: Volatile
-            Filter size: 10
-            History Policy: Keep Last
-            Reliability Policy: Best Effort
-            Value: /tof6Sensor
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz_default_plugins/Range
-          Color: 237; 212; 0
-          Enabled: true
-          Name: tof7Sensor
-          Topic:
-            Depth: 5
-            Durability Policy: Volatile
-            Filter size: 10
-            History Policy: Keep Last
-            Reliability Policy: Best Effort
-            Value: /tof7Sensor
-          Value: true
-      Enabled: true
-      Name: TofGroup
+      Value: true
   Enabled: true
   Global Options:
-    Background Color: 211; 215; 207
+    Background Color: 136; 138; 133
     Fixed Frame: base_link
     Frame Rate: 30
   Name: root
@@ -1037,26 +1037,21 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Class: rviz_default_plugins/Orbit
-      Distance: 5.668207168579102
+      Angle: -1.590000033378601
+      Class: rviz_default_plugins/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
-      Focal Point:
-        X: 0.27841269969940186
-        Y: 1.836978793144226
-        Z: -0.0003774896322283894
-      Focal Shape Fixed Size: true
-      Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.5697963237762451
+      Scale: 317.5639343261719
       Target Frame: <Fixed Frame>
-      Value: Orbit (rviz_default_plugins)
-      Yaw: 6.247387886047363
+      Value: TopDownOrtho (rviz_default_plugins)
+      X: -0.04751817509531975
+      Y: 0.09148278087377548
     Saved: ~
 Window Geometry:
   Displays:
@@ -1078,5 +1073,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1920
-  X: 1069
-  Y: 299
+  X: 149
+  Y: 283

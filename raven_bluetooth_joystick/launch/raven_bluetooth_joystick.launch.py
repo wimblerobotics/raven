@@ -12,8 +12,6 @@ def generate_launch_description():
         'config',
         'bluetooth_joystick.yaml'
     )
-    print("configFilePath: ", configFilePath)
-
     with open(configFilePath, 'r') as file:
         configParams = yaml.safe_load(file)['bluetooth_joystick']['ros__parameters']
 
