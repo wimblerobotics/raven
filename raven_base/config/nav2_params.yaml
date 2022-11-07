@@ -189,7 +189,7 @@ controller_server_rclcpp_node:
 local_costmap:
   local_costmap:
     ros__parameters:
-      footprint: "[[-0.450, -0.215], [-0.450, 0.215], [0.235, 0.215], [0.235, -0.215], [-0.450, -0.215]]"
+      footprint: "[[-0.450, -0.215], [-0.450, 0.215], [0.235, 0.215], [0.235, -0.215]]"
       update_frequency: 5.0
       publish_frequency: 2.0
       global_frame: odom
@@ -253,7 +253,7 @@ local_costmap:
 global_costmap:
   global_costmap:
     ros__parameters:
-      footprint: "[[-0.450, -0.215], [-0.450, 0.215], [0.235, 0.215], [0.235, -0.215], [-0.450, -0.215]]"
+      footprint: "[[-0.450, -0.215], [-0.450, 0.215], [0.235, 0.215], [0.235, -0.215]]"
       update_frequency: 1.0
       publish_frequency: 1.0
       global_frame: map
