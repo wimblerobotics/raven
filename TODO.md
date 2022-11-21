@@ -1,4 +1,5 @@
+* Teensy stops working after nav goal entered.
 * CPU doesn't always startup by itself. Shows "VGA" post code
-* RoboClaw sometimes whos nearly 10 amp current reading even when zero velocity sent.
+* RoboClaw sometimes shows nearly 10 amp current reading even when zero velocity sent.
 * Get redunt I2C current sensors working for Teensy.
   
