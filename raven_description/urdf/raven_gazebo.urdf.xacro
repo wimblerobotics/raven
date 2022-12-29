@@ -195,7 +195,7 @@
     <material>Gazebo/Black</material>
   </gazebo>
 
-  <gazebo reference="lcaster_wheel_link">
+  <gazebo reference="fcaster_wheel_link">
     <mu1>0.00000</mu1>
     <mu2>0.00000</mu2>
     <!-- kp>100000.0</kp>

@@ -25,7 +25,7 @@ SOFTWARE.
     <xacro:property name="tof_depth" value="0.015" />
     <xacro:property name="tof_height" value="0.018" />
     <xacro:property name="tof_width" value="0.023" />
-    <xacro:property name="tof_z_offset" value="0.020" />
+    <xacro:property name="tof_z_offset" value="0.015" />
 
     <link name="tof_0">
         <visual>

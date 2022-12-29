@@ -25,7 +25,7 @@ SOFTWARE.
     <xacro:property name="sonar_depth" value="0.020" />
     <xacro:property name="sonar_height" value="0.030" />
     <xacro:property name="sonar_width" value="0.050" />
-    <xacro:property name="sonar_z_offset" value="0.082" />
+    <xacro:property name="sonar_z_offset" value="0.173" />
 
     <link name="sonar_0">
         <visual>
