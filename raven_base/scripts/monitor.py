@@ -1,21 +1,23 @@
 from datetime import datetime
 import tkinter as tk
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
+import math
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 import numpy as np
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
+from sensor_msgs.msg._laser_scan import LaserScan
 from sensor_msgs.msg._range import Range
 from std_msgs.msg import String
 from threading import Thread, Lock
-# import tkinter as tk
-# # from tkinter.ttk import *
-# import matplotlib as plt
+
 # # plt.matplotlib.use("TkAgg")
-# from matplotlib.figure import Figure
-# from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 ros_mutex = Lock()
 
@@ -26,7 +28,9 @@ class TofSubscriberNode(Node):
         super().__init__('tof_subscriber_node')
         self.number_sensors = 8  # There are 8 sensors.
         self.start_time = datetime.now()
-        self.callback_count = np.zeros(self.number_sensors, dtype='int32')
+        self.callback_counts = np.zeros(self.number_sensors, dtype='int32')
+        self.rates = np.zeros(self.number_sensors, dtype='float32')
+        self.values = np.zeros(self.number_sensors, dtype='float32')
 
         # Set up the ROS 2 quality of service in order to read the sensor data.
         qos_profile = QoSProfile(
@@ -46,28 +50,26 @@ class TofSubscriberNode(Node):
 
         self.subscription  # prevent unused variable warning
 
-    # Process a time-of-flight sensor message of type Range.
-
     def listener_callback(self, msg):
         global ros_mutex
-        ros_mutex.acquire()
-        # Get the sensor number.
-        sensor_number = int(msg.header.frame_id[-1])
-        range_value = msg.range
-        self.callback_count[sensor_number] = self.callback_count[sensor_number] + 1
-        global tofs
-        tofs.set_value(sensor_number, "%1.3f" % range_value)
-        tofs.set_count(sensor_number, "%d" % self.callback_count[sensor_number])
+        with ros_mutex:
+            # Get the sensor number.
+            sensor_number = int(msg.header.frame_id[-1])
+            range_value = msg.range
+            self.callback_counts[sensor_number] = self.callback_counts[sensor_number] + 1
+            global tofs
+            self.values[sensor_number] = range_value
+            # tofs.set_value(sensor_number, "%1.3f" % range_value)
+            # tofs.set_count(sensor_number, "%d" % self.callback_count[sensor_number])
 
-        if (self.callback_count[sensor_number] % 24) == 0:
-            # Print out the frames per second of sensor data for all 8 sensors since the last plot update.
-            # Divide by 8 if you want to know the frames per second per sensor.
-            duration = datetime.now() - self.start_time
-            fps = self.callback_count[sensor_number] / \
-                (duration.seconds + (duration.microseconds / 1000000.0))
-            tofs.set_rate(sensor_number, "%2.1f" % fps)
-
-        ros_mutex.release()
+            if (self.callback_counts[sensor_number] % 24) == 0:
+                # Print out the frames per second of sensor data for all 8 sensors since the last plot update.
+                # Divide by 8 if you want to know the frames per second per sensor.
+                duration = datetime.now() - self.start_time
+                fps = self.callback_counts[sensor_number] / \
+                    (duration.seconds + (duration.microseconds / 1000000.0))
+                self.rates[sensor_number] = fps
+                # tofs.set_rate(sensor_number, "%2.1f" % fps)
 
 class SonarSubscriberNode(Node):
 
@@ -75,7 +77,9 @@ class SonarSubscriberNode(Node):
         super().__init__('sonar_subscriber_node')
         self.number_sensors = 4  # There are 4 sensors.
         self.start_time = datetime.now()
-        self.callback_count = np.zeros(self.number_sensors, dtype='int32')
+        self.callback_counts = np.zeros(self.number_sensors, dtype='int32')
+        self.rates = np.zeros(self.number_sensors, dtype='float32')
+        self.values = np.zeros(self.number_sensors, dtype='float32')
 
         # Set up the ROS 2 quality of service in order to read the sensor data.
         qos_profile = QoSProfile(
@@ -83,7 +87,7 @@ class SonarSubscriberNode(Node):
             history=QoSHistoryPolicy.KEEP_LAST,
             depth=1
         )
-
+        
         # Subscribe to the sensor topics.
         for sensor_number in range(self.number_sensors):
             self.subscription = self.create_subscription(
@@ -95,28 +99,85 @@ class SonarSubscriberNode(Node):
 
         self.subscription  # prevent unused variable warning
 
-    # Process a time-of-flight sensor message of type Range.
-
     def listener_callback(self, msg):
         global ros_mutex
-        ros_mutex.acquire()
-        # Get the sensor number.
-        sensor_number = int(msg.header.frame_id[-1])
-        range_value = msg.range
-        self.callback_count[sensor_number] = self.callback_count[sensor_number] + 1
-        global sonars
-        sonars.set_value(sensor_number, "%1.3f" % range_value)
-        sonars.set_count(sensor_number, "%d" % self.callback_count[sensor_number])
+        with ros_mutex:
+            # Get the sensor number.
+            sensor_number = int(msg.header.frame_id[-1])
+            range_value = msg.range
+            self.callback_counts[sensor_number] = self.callback_counts[sensor_number] + 1
+            global sonars
+            self.values[sensor_number] = range_value
+            # sonars.set_value(sensor_number, "%1.3f" % range_value)
+            # sonars.set_count(sensor_number, "%d" % self.callback_counts[sensor_number])
 
-        if (self.callback_count[sensor_number] % 24) == 0:
-            # Print out the frames per second of sensor data for all 8 sensors since the last plot update.
-            # Divide by 8 if you want to know the frames per second per sensor.
-            duration = datetime.now() - self.start_time
-            fps = self.callback_count[sensor_number] / \
-                (duration.seconds + (duration.microseconds / 1000000.0))
-            sonars.set_rate(sensor_number, "%2.1f" % fps)
+            global map_canvas
+            scale = 512.0 / 12.0
+            x = math.cos(math.pi * (sensor_number / 2)) * range_value * scale
+            y = math.sin(math.pi * (sensor_number / 2)) * range_value * scale
+            # create_circle((1024/2) + x, (512/2) + y, 3, map_canvas, fill='cyan', outline='cyan')
 
-        ros_mutex.release()
+            if (self.callback_counts[sensor_number] % 24) == 0:
+                # Print out the frames per second of sensor data for all 8 sensors since the last plot update.
+                # Divide by 8 if you want to know the frames per second per sensor.
+                duration = datetime.now() - self.start_time
+                fps = self.callback_counts[sensor_number] / \
+                    (duration.seconds + (duration.microseconds / 1000000.0))
+                self.rates[sensor_number] = fps
+                # sonars.set_rate(sensor_number, "%2.1f" % fps)
+
+class LidarSubscriberNode(Node):
+
+    def __init__(self):
+        super().__init__('lidar_subscriber_node')
+
+        self.xs = []
+        self.ys = []
+        self.ss = []
+
+        # Set up the ROS 2 quality of service in order to read the sensor data.
+        qos_profile = QoSProfile(
+            reliability=QoSReliabilityPolicy.BEST_EFFORT,
+            history=QoSHistoryPolicy.KEEP_LAST,
+            depth=1
+        )
+
+        # Subscribe to the LIDAR topic.
+        self.subscription = self.create_subscription(
+            LaserScan,
+            '/scan',
+            self.listener_callback,
+            qos_profile,
+        )
+
+        self.subscription  # prevent unused variable warning
+
+    def listener_callback(self, msg):
+        # global map_canvas
+        global ax
+        global ros_mutex
+        with ros_mutex:
+            angle = msg.angle_min
+            scale = 512.0 / 12.0
+            # if not self.setup_complete:
+            #     self.number_points = len(msg.ranges)
+            #     self.setup_complete = True
+            # # else:
+            #     # self.scatter_plot.cla()
+
+            self.xs = []
+            self.ys = []
+            self.ss = []
+            angle = 0.0
+            for range in msg.ranges:
+                if (range > 50.0) or (range < -50.0):
+                    range = 0.0
+                x = math.cos(angle) * range * scale
+                y = math.sin(angle) * range * scale
+                self.xs.append(x)
+                self.ys.append(y)
+                self.ss.append(1.0)
+                angle = angle + msg.angle_increment
 
 class MiscTable:
     def __init__(self, container_panel, container_row, container_col):
@@ -183,12 +244,12 @@ class ProximityTable:
             tmp.grid(row=i+1, column=3)
 
 
-def create_circle(x, y, r, canvas):  # center coordinates, radius
+def create_circle(x, y, r, canvas, fill='#004', outline='#004'):  # center coordinates, radius
     x0 = x - r
     y0 = y - r
     x1 = x + r
     y1 = y + r
-    return canvas.create_oval(x0, y0, x1, y1, fill="#004")
+    return canvas.create_oval(x0, y0, x1, y1, fill=fill, outline=outline)
 
 # See: https://stackoverflow.com/questions/16745507/tkinter-how-to-use-threads-to-preventing-main-event-loop-from-freezing
 class BackgroundTask():
@@ -223,27 +284,80 @@ class BackgroundTask():
                 print(e)
             self.__bgTask_.stop()
 
+def lidar_thread():
+    global lidar_subscriber, lidar_subscriber_exists
+    lidar_subscriber = LidarSubscriberNode()
+    lidar_subscriber_exists = True
+    rclpy.spin(lidar_subscriber)
+
 def sonar_thread():
+    global sonar_subscriber, sonar_subscriber_exists
     sonar_subscriber = SonarSubscriberNode()
+    sonar_subscriber_exists = True
     rclpy.spin(sonar_subscriber)
     
 def tof_thread():
+    global tof_subscriber, tof_subscriber_exists
     tof_subscriber = TofSubscriberNode()
+    tof_subscriber_exists = True
     rclpy.spin(tof_subscriber)
     
-def executor_thread():
-    rclpy.spin()
+# def executor_thread():
+#     rclpy.spin()
+
+def update_lidar():
+    global lidar_subscriber, lidar_subscriber_exists, ax, fig, root
+    if lidar_subscriber_exists:
+        xs = lidar_subscriber.xs
+        ys = lidar_subscriber.ys
+        ss = lidar_subscriber.ss
+        ax.cla()
+        ax.scatter(xs, ys, ss, color='r')
+        ax.set_xlim([-30, 30])
+        ax.set_ylim([-30, 30])
+        # ax.draw()
+        # ax.pause(0.01)
+        fig.canvas.draw()
+        fig.canvas.flush_events()
+    root.after(500, update_lidar)
+
+def update_sonar():
+    global sonar_subscriber, sonar_subscriber_exists, sonars
+    if sonar_subscriber_exists:
+        for which in range(sonar_subscriber.number_sensors):
+            sonars.counts[which].config(text="%d" % sonar_subscriber.callback_counts[which])
+            sonars.rates[which].config(text="%1.3f" % sonar_subscriber.rates[which])
+            sonars.values[which].config(text="%1.3f" % sonar_subscriber.values[which])
+    root.after(30, update_sonar)
+
+
+def update_tof():
+    global tof_subscriber, tof_subscriber_exists, tofs
+    if tof_subscriber_exists:
+        for which in range(tof_subscriber.number_sensors):
+            # if ((len(sonars.counts) != tof_subscriber.number_sensors) or
+            #     (len(tof_subscriber.callback_counts) != tof_subscriber.number_sensors) or
+            #     (tof_subscriber.number_sensors != 8)):
+            #     print("Something is wrong")
+            tofs.counts[which].config(text="%d" % tof_subscriber.callback_counts[which])
+            tofs.rates[which].config(text="%1.3f" % tof_subscriber.rates[which])
+            tofs.values[which].config(text="%1.3f" % tof_subscriber.values[which])
+    root.after(30, update_tof)
+
 
 def main(args=None):
-    rclpy.init(args=args)
-    global executor
-    executor = rclpy.executors.MultiThreadedExecutor()
-    executor.add_node(SonarSubscriberNode())
-    executor.add_node(TofSubscriberNode())
-    e_thread = BackgroundTask(executor.spin)
-    # tof_bg_thread = BackgroundTask(tof_thread)
-    # sonar_bg_thread = BackgroundTask(sonar_thread)
+    global lidar_subscriber_exists, sonar_subscriber_exists, tof_subscriber_exists
+    lidar_subscriber_exists  = False
+    sonar_subscriber_exists = False
+    tof_subscriber_exists = False
     
+    rclpy.init(args=args)
+    
+    # # tof_bg_thread = BackgroundTask(tof_thread)
+    # sonar_bg_thread = BackgroundTask(sonar_thread)
+    # lidar_bg_thread = BackgroundTask(lidar_thread)
+    
+    global root
     root = tk.Tk()
     root.geometry("1024x1024")
 
@@ -255,27 +369,57 @@ def main(args=None):
         root, highlightbackground="black", highlightthickness=1)
     lidar_panel.grid(row=1, column=0)
 
-    map_canvas = tk.Canvas(lidar_panel, width=1024, height=512)
-    map_canvas.grid(row=0, column=0)
-    create_circle((1024/2)-54, (512/2)-54, 2, map_canvas)
-    create_circle((1024/2)-54, (512/2)+54, 2, map_canvas)
-    # map_canvas.create_polygon(60,40, 30,50, 30,30, 60,40, fill="#ffa500")
-    map_canvas.create_arc((1024/2)-50, (512/2)-50, (1024/2)+50, (512/2)+50,
-                          start=173, extent=7, fill="#ffa500", style=tk.PIESLICE)
+    global fig, ax, lidar_canvas
+    fig = Figure(figsize=(4, 2), dpi=100)
+    x_axis_half_range = 1024.0 / 20.0
+    y_axis_half_range = 512.0 / 20.0
+    plt.ion()
+    plt.show()
+    fig.add_axes([-x_axis_half_range, -y_axis_half_range, x_axis_half_range, y_axis_half_range])
+    ax = fig.add_subplot(111)
+    
+    lidar_canvas = FigureCanvasTkAgg(fig, master=lidar_panel)
+    lidar_canvas.get_tk_widget().grid(row=0, column=0)
+    root.after(500, update_lidar)
+    root.after(30, update_sonar)
+    root.after(30, update_tof)
 
+    # global map_canvas
+    # map_canvas = tk.Canvas(lidar_panel, width=1024, height=512)
+    # map_canvas.grid(row=0, column=0)
+    
+    
     proximity_panel = tk.Frame(master=root)
     proximity_panel.grid(row=2, column=0)
 
     global tofs, sonars
     tofs = ProximityTable(proximity_panel, 0, 0, "tof", 8)
     sonars = ProximityTable(proximity_panel, 0, 2, "sonar", 4)
-    sonars.set_value(1, 2.345)
 
     misc = MiscTable(proximity_panel, 0, 3)
 
-    # tof_bg_thread.start()
+    # # tof_bg_thread.start()
     # sonar_bg_thread.start()
-    e_thread.start()
+    # lidar_bg_thread.start()
+    
+    # global executor
+    global lidar_subscriber
+    lidar_subscriber = LidarSubscriberNode()
+    lidar_subscriber_exists = True
+    global sonar_subscriber
+    sonar_subscriber = SonarSubscriberNode()
+    sonar_subscriber_exists = True
+    global tof_subscriber
+    tof_subscriber = TofSubscriberNode()
+    tof_subscriber_exists = True
+    executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
+    executor.add_node(lidar_subscriber)
+    executor.add_node(sonar_subscriber)
+    executor.add_node(tof_subscriber)
+    # e_thread = BackgroundTask(executor.spin)
+    executor_thread = Thread(target=executor.spin, daemon=True)
+    executor_thread.start()
+    
     #Calling mainloop
     root.mainloop()
     rclpy.shutdown()
