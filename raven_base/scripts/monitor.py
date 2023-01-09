@@ -145,6 +145,7 @@ class LidarSubscriberNode(Node):
         self.ys = []
         self.ss = []
         self.setup_complete = False
+        self.scatter_created = False
         
         # Set up the ROS 2 quality of service in order to read the sensor data.
         qos_profile = QoSProfile(
@@ -268,7 +269,11 @@ def update_lidar():
         ys = lidar_subscriber.ys
         ss = lidar_subscriber.ss
         # ax.cla()
+        
+        if lidar_subscriber.scatter_created:
+            scatter_plot.remove()
         scatter_plot = ax.scatter(xs, ys, ss, color='r')
+        lidar_subscriber.scatter_created = True
         ax.set_xlim([-6, 6])
         ax.set_ylim([-6, 6])
         # ax.draw()
