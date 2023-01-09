@@ -114,9 +114,33 @@ class SonarSubscriberNode(Node):
 
 class LidarSubscriberNode(Node):
 
+    def update_annot(self, ind):
+        global scatter_plot
+        pos = scatter_plot.get_offsets()[ind["ind"][0]]
+        self.annot.xy = pos
+        text = "{:1.3f}, {:1.3f}".format(pos[0], pos[1])
+        self.annot.set_text(text)
+        # self.annot.get_bbox_patch().set_facecolor('#eafff5')
+        # self.annot.get_bbox_patch().set_alpha(0.4)
+
+    def hover(self, event):
+        global ax, fig, scatter_plot
+        vis = self.annot.get_visible()
+        if event.inaxes == ax:
+            cont, ind = scatter_plot.contains(event)
+            if cont:
+                self.update_annot(ind)
+                self.annot.set_visible(True)
+                fig.canvas.draw_idle()
+            else:
+                if vis:
+                    self.annot.set_visible(False)
+                    fig.canvas.draw_idle()
+                    
     def __init__(self):
         super().__init__('lidar_subscriber_node')
 
+        global ax, fig
         self.xs = []
         self.ys = []
         self.ss = []
@@ -137,21 +161,30 @@ class LidarSubscriberNode(Node):
             qos_profile,
         )
 
-        self.subscription  # prevent unused variable warning
+        # self.subscription  # prevent unused variable warning
+
+        ax.grid(True)
+        self.annot = ax.annotate("here is some annotation", xy=(10,10), xytext=(20,20),textcoords="offset points",
+                            bbox=dict(boxstyle="round", fc="w"),
+                            arrowprops=dict(arrowstyle="->"))
+        # self.annot = ax.annotate("here is some annotation", xy=(10,10), xytext=(20,20),textcoords="offset points")
+        self.annot.set_visible(True) ###
+
+        fig.canvas.mpl_connect("motion_notify_event", self.hover)
+                                
     def listener_callback(self, msg):
         # global map_canvas
-        global ax
         global ros_mutex
         with ros_mutex:
             angle = msg.angle_min
             scale = 1.0
             if not self.setup_complete:
                 self.number_points = len(msg.ranges)
+                self.xs = np.zeros(len(msg.ranges), dtype='float32')
+                self.ys = np.zeros(len(msg.ranges), dtype='float32')
+                self.ss = np.zeros(len(msg.ranges), dtype='float32')
                 self.setup_complete = True
 
-            self.xs = np.zeros(len(msg.ranges), dtype='float32')
-            self.ys = np.zeros(len(msg.ranges), dtype='float32')
-            self.ss = np.zeros(len(msg.ranges), dtype='float32')
             angle = 0.0
             index = 0
             for range in msg.ranges:
@@ -229,13 +262,13 @@ class ProximityTable:
             tmp.grid(row=i+1, column=3)
 
 def update_lidar():
-    global lidar_subscriber, lidar_subscriber_exists, ax, fig, root
+    global lidar_subscriber, lidar_subscriber_exists, ax, fig, scatter_plot
     if lidar_subscriber_exists:
         xs = lidar_subscriber.xs
         ys = lidar_subscriber.ys
         ss = lidar_subscriber.ss
-        ax.cla()
-        ax.scatter(xs, ys, ss, color='r')
+        # ax.cla()
+        scatter_plot = ax.scatter(xs, ys, ss, color='r')
         ax.set_xlim([-6, 6])
         ax.set_ylim([-6, 6])
         # ax.draw()
