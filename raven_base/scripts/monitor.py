@@ -17,10 +17,7 @@ from sensor_msgs.msg._range import Range
 from std_msgs.msg import String
 from threading import Thread, Lock
 
-# # plt.matplotlib.use("TkAgg")
-
 ros_mutex = Lock()
-
 
 class TofSubscriberNode(Node):
 
@@ -59,17 +56,12 @@ class TofSubscriberNode(Node):
             self.callback_counts[sensor_number] = self.callback_counts[sensor_number] + 1
             global tofs
             self.values[sensor_number] = range_value
-            # tofs.set_value(sensor_number, "%1.3f" % range_value)
-            # tofs.set_count(sensor_number, "%d" % self.callback_count[sensor_number])
 
             if (self.callback_counts[sensor_number] % 24) == 0:
-                # Print out the frames per second of sensor data for all 8 sensors since the last plot update.
-                # Divide by 8 if you want to know the frames per second per sensor.
                 duration = datetime.now() - self.start_time
                 fps = self.callback_counts[sensor_number] / \
                     (duration.seconds + (duration.microseconds / 1000000.0))
                 self.rates[sensor_number] = fps
-                # tofs.set_rate(sensor_number, "%2.1f" % fps)
 
 class SonarSubscriberNode(Node):
 
@@ -108,23 +100,17 @@ class SonarSubscriberNode(Node):
             self.callback_counts[sensor_number] = self.callback_counts[sensor_number] + 1
             global sonars
             self.values[sensor_number] = range_value
-            # sonars.set_value(sensor_number, "%1.3f" % range_value)
-            # sonars.set_count(sensor_number, "%d" % self.callback_counts[sensor_number])
 
             global map_canvas
             scale = 512.0 / 12.0
             x = math.cos(math.pi * (sensor_number / 2)) * range_value * scale
             y = math.sin(math.pi * (sensor_number / 2)) * range_value * scale
-            # create_circle((1024/2) + x, (512/2) + y, 3, map_canvas, fill='cyan', outline='cyan')
 
             if (self.callback_counts[sensor_number] % 24) == 0:
-                # Print out the frames per second of sensor data for all 8 sensors since the last plot update.
-                # Divide by 8 if you want to know the frames per second per sensor.
                 duration = datetime.now() - self.start_time
                 fps = self.callback_counts[sensor_number] / \
                     (duration.seconds + (duration.microseconds / 1000000.0))
                 self.rates[sensor_number] = fps
-                # sonars.set_rate(sensor_number, "%2.1f" % fps)
 
 class LidarSubscriberNode(Node):
 
@@ -134,7 +120,8 @@ class LidarSubscriberNode(Node):
         self.xs = []
         self.ys = []
         self.ss = []
-
+        self.setup_complete = False
+        
         # Set up the ROS 2 quality of service in order to read the sensor data.
         qos_profile = QoSProfile(
             reliability=QoSReliabilityPolicy.BEST_EFFORT,
@@ -151,7 +138,6 @@ class LidarSubscriberNode(Node):
         )
 
         self.subscription  # prevent unused variable warning
-
     def listener_callback(self, msg):
         # global map_canvas
         global ax
@@ -159,25 +145,25 @@ class LidarSubscriberNode(Node):
         with ros_mutex:
             angle = msg.angle_min
             scale = 512.0 / 12.0
-            # if not self.setup_complete:
-            #     self.number_points = len(msg.ranges)
-            #     self.setup_complete = True
-            # # else:
-            #     # self.scatter_plot.cla()
+            if not self.setup_complete:
+                self.number_points = len(msg.ranges)
+                self.setup_complete = True
 
-            self.xs = []
-            self.ys = []
-            self.ss = []
+            self.xs = np.zeros(len(msg.ranges), dtype='float32')
+            self.ys = np.zeros(len(msg.ranges), dtype='float32')
+            self.ss = np.zeros(len(msg.ranges), dtype='float32')
             angle = 0.0
+            index = 0
             for range in msg.ranges:
                 if (range > 50.0) or (range < -50.0):
                     range = 0.0
                 x = math.cos(angle) * range * scale
                 y = math.sin(angle) * range * scale
-                self.xs.append(x)
-                self.ys.append(y)
-                self.ss.append(1.0)
+                self.xs[index] = x
+                self.ys[index] = y
+                self.ss[index] = 1.0
                 angle = angle + msg.angle_increment
+                index = index + 1
 
 class MiscTable:
     def __init__(self, container_panel, container_row, container_col):
@@ -196,7 +182,6 @@ class MiscTable:
         self.odom = tk.Label(self.panel, text="-123.45, -1234.45", width=18, padx=self.x_pad,
                              pady=self.y_pad, borderwidth=1, relief="solid", font="Courier 12", anchor="e")
         self.odom.grid(row=1, column=1)
-
 
 class ProximityTable:
     def set_count(obj, which, value):
@@ -243,68 +228,6 @@ class ProximityTable:
             self.values.append(tmp)
             tmp.grid(row=i+1, column=3)
 
-
-def create_circle(x, y, r, canvas, fill='#004', outline='#004'):  # center coordinates, radius
-    x0 = x - r
-    y0 = y - r
-    x1 = x + r
-    y1 = y + r
-    return canvas.create_oval(x0, y0, x1, y1, fill=fill, outline=outline)
-
-# See: https://stackoverflow.com/questions/16745507/tkinter-how-to-use-threads-to-preventing-main-event-loop-from-freezing
-class BackgroundTask():
-
-    def __init__( self, taskFuncPointer ):
-        self.__taskFuncPointer_ = taskFuncPointer
-        self.__workerThread_ = None
-        self.__isRunning_ = False
-
-    def taskFuncPointer( self ) : return self.__taskFuncPointer_
-
-    def isRunning( self ) : 
-        return self.__isRunning_ and self.__workerThread_.isAlive()
-
-    def start( self ): 
-        if not self.__isRunning_ :
-            self.__isRunning_ = True
-            self.__workerThread_ = self.WorkerThread( self )
-            self.__workerThread_.start()
-
-    def stop( self ) : self.__isRunning_ = False
-
-    class WorkerThread(Thread ):
-        def __init__( self, bgTask ):      
-            Thread.__init__( self )
-            self.__bgTask_ = bgTask
-
-        def run( self ):
-            try :
-                self.__bgTask_.taskFuncPointer()()
-            except Exception as e:
-                print(e)
-            self.__bgTask_.stop()
-
-def lidar_thread():
-    global lidar_subscriber, lidar_subscriber_exists
-    lidar_subscriber = LidarSubscriberNode()
-    lidar_subscriber_exists = True
-    rclpy.spin(lidar_subscriber)
-
-def sonar_thread():
-    global sonar_subscriber, sonar_subscriber_exists
-    sonar_subscriber = SonarSubscriberNode()
-    sonar_subscriber_exists = True
-    rclpy.spin(sonar_subscriber)
-    
-def tof_thread():
-    global tof_subscriber, tof_subscriber_exists
-    tof_subscriber = TofSubscriberNode()
-    tof_subscriber_exists = True
-    rclpy.spin(tof_subscriber)
-    
-# def executor_thread():
-#     rclpy.spin()
-
 def update_lidar():
     global lidar_subscriber, lidar_subscriber_exists, ax, fig, root
     if lidar_subscriber_exists:
@@ -335,10 +258,6 @@ def update_tof():
     global tof_subscriber, tof_subscriber_exists, tofs
     if tof_subscriber_exists:
         for which in range(tof_subscriber.number_sensors):
-            # if ((len(sonars.counts) != tof_subscriber.number_sensors) or
-            #     (len(tof_subscriber.callback_counts) != tof_subscriber.number_sensors) or
-            #     (tof_subscriber.number_sensors != 8)):
-            #     print("Something is wrong")
             tofs.counts[which].config(text="%d" % tof_subscriber.callback_counts[which])
             tofs.rates[which].config(text="%1.3f" % tof_subscriber.rates[which])
             tofs.values[which].config(text="%1.3f" % tof_subscriber.values[which])
@@ -352,10 +271,6 @@ def main(args=None):
     tof_subscriber_exists = False
     
     rclpy.init(args=args)
-    
-    # # tof_bg_thread = BackgroundTask(tof_thread)
-    # sonar_bg_thread = BackgroundTask(sonar_thread)
-    # lidar_bg_thread = BackgroundTask(lidar_thread)
     
     global root
     root = tk.Tk()
@@ -384,11 +299,6 @@ def main(args=None):
     root.after(30, update_sonar)
     root.after(30, update_tof)
 
-    # global map_canvas
-    # map_canvas = tk.Canvas(lidar_panel, width=1024, height=512)
-    # map_canvas.grid(row=0, column=0)
-    
-    
     proximity_panel = tk.Frame(master=root)
     proximity_panel.grid(row=2, column=0)
 
@@ -398,10 +308,6 @@ def main(args=None):
 
     misc = MiscTable(proximity_panel, 0, 3)
 
-    # # tof_bg_thread.start()
-    # sonar_bg_thread.start()
-    # lidar_bg_thread.start()
-    
     # global executor
     global lidar_subscriber
     lidar_subscriber = LidarSubscriberNode()
@@ -416,7 +322,6 @@ def main(args=None):
     executor.add_node(lidar_subscriber)
     executor.add_node(sonar_subscriber)
     executor.add_node(tof_subscriber)
-    # e_thread = BackgroundTask(executor.spin)
     executor_thread = Thread(target=executor.spin, daemon=True)
     executor_thread.start()
     
