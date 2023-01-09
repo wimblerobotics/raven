@@ -144,7 +144,7 @@ class LidarSubscriberNode(Node):
         global ros_mutex
         with ros_mutex:
             angle = msg.angle_min
-            scale = 512.0 / 12.0
+            scale = 1.0
             if not self.setup_complete:
                 self.number_points = len(msg.ranges)
                 self.setup_complete = True
@@ -236,8 +236,8 @@ def update_lidar():
         ss = lidar_subscriber.ss
         ax.cla()
         ax.scatter(xs, ys, ss, color='r')
-        ax.set_xlim([-30, 30])
-        ax.set_ylim([-30, 30])
+        ax.set_xlim([-6, 6])
+        ax.set_ylim([-6, 6])
         # ax.draw()
         # ax.pause(0.01)
         fig.canvas.draw()
@@ -285,7 +285,7 @@ def main(args=None):
     lidar_panel.grid(row=1, column=0)
 
     global fig, ax, lidar_canvas
-    fig = Figure(figsize=(4, 2), dpi=100)
+    fig = Figure(figsize=(8, 8), dpi=100)
     x_axis_half_range = 1024.0 / 20.0
     y_axis_half_range = 512.0 / 20.0
     plt.ion()
@@ -309,6 +309,7 @@ def main(args=None):
     misc = MiscTable(proximity_panel, 0, 3)
 
     # global executor
+    # See: https://answers.ros.org/question/377848/spinning-multiple-nodes-across-multiple-threads/
     global lidar_subscriber
     lidar_subscriber = LidarSubscriberNode()
     lidar_subscriber_exists = True
