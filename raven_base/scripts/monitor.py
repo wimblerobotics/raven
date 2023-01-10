@@ -1,10 +1,11 @@
 from datetime import datetime
 import tkinter as tk
-import matplotlib.pyplot as plt
+import math
+import matplotlib
 from matplotlib.animation import FuncAnimation
+import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
-import math
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
@@ -72,6 +73,12 @@ class SonarSubscriberNode(Node):
         self.callback_counts = np.zeros(self.number_sensors, dtype='int32')
         self.rates = np.zeros(self.number_sensors, dtype='float32')
         self.values = np.zeros(self.number_sensors, dtype='float32')
+        self.order_map = [0, 1, 3, 2]
+        self.markers = [matplotlib.markers.CARETUP, matplotlib.markers.CARETLEFT, matplotlib.markers.CARETRIGHT, matplotlib.markers.CARETDOWN]
+        self.body_length = 0.4572
+        self.body_width = 0.3048
+        self.x_offsets = [self.body_length / 2.0, 0, 0, -self.body_length / 2.0]
+        self.y_offsets = [0, self.body_width / 2.0, 0, -self.body_width / 2.0]
 
         # Set up the ROS 2 quality of service in order to read the sensor data.
         qos_profile = QoSProfile(
@@ -114,9 +121,8 @@ class SonarSubscriberNode(Node):
 
 class LidarSubscriberNode(Node):
 
-    def update_annot(self, ind):
-        global scatter_plot
-        pos = scatter_plot.get_offsets()[ind["ind"][0]]
+    def update_annot(self, ind, plot):
+        pos = plot.get_offsets()[ind["ind"][0]]
         self.annot.xy = pos
         text = "{:1.3f}, {:1.3f}".format(pos[0], pos[1])
         self.annot.set_text(text)
@@ -125,11 +131,48 @@ class LidarSubscriberNode(Node):
 
     def hover(self, event):
         global ax, fig, scatter_plot
+        global sonar_scatter_plot0, sonar_scatter_plot1, sonar_scatter_plot2, sonar_scatter_plot3
         vis = self.annot.get_visible()
         if event.inaxes == ax:
             cont, ind = scatter_plot.contains(event)
             if cont:
-                self.update_annot(ind)
+                self.update_annot(ind, scatter_plot)
+                self.annot.set_visible(True)
+                fig.canvas.draw_idle()
+            else:
+                if vis:
+                    self.annot.set_visible(False)
+                    fig.canvas.draw_idle()
+            cont, ind = sonar_scatter_plot0.contains(event)
+            if cont:
+                self.update_annot(ind, sonar_scatter_plot0)
+                self.annot.set_visible(True)
+                fig.canvas.draw_idle()
+            else:
+                if vis:
+                    self.annot.set_visible(False)
+                    fig.canvas.draw_idle()
+            cont, ind = sonar_scatter_plot1.contains(event)
+            if cont:
+                self.update_annot(ind, sonar_scatter_plot1)
+                self.annot.set_visible(True)
+                fig.canvas.draw_idle()
+            else:
+                if vis:
+                    self.annot.set_visible(False)
+                    fig.canvas.draw_idle()
+            cont, ind = sonar_scatter_plot2.contains(event)
+            if cont:
+                self.update_annot(ind, sonar_scatter_plot2)
+                self.annot.set_visible(True)
+                fig.canvas.draw_idle()
+            else:
+                if vis:
+                    self.annot.set_visible(False)
+                    fig.canvas.draw_idle()
+            cont, ind = sonar_scatter_plot3.contains(event)
+            if cont:
+                self.update_annot(ind, sonar_scatter_plot3)
                 self.annot.set_visible(True)
                 fig.canvas.draw_idle()
             else:
@@ -165,11 +208,10 @@ class LidarSubscriberNode(Node):
         # self.subscription  # prevent unused variable warning
 
         ax.grid(True)
-        self.annot = ax.annotate("here is some annotation", xy=(10,10), xytext=(20,20),textcoords="offset points",
+        self.annot = ax.annotate("", xy=(10,10), xytext=(20,20),textcoords="offset points",
                             bbox=dict(boxstyle="round", fc="w"),
                             arrowprops=dict(arrowstyle="->"))
-        # self.annot = ax.annotate("here is some annotation", xy=(10,10), xytext=(20,20),textcoords="offset points")
-        self.annot.set_visible(True) ###
+        self.annot.set_visible(False)
 
         fig.canvas.mpl_connect("motion_notify_event", self.hover)
                                 
@@ -184,18 +226,19 @@ class LidarSubscriberNode(Node):
                 self.xs = np.zeros(len(msg.ranges), dtype='float32')
                 self.ys = np.zeros(len(msg.ranges), dtype='float32')
                 self.ss = np.zeros(len(msg.ranges), dtype='float32')
+                self.ss[:] = 1.0
                 self.setup_complete = True
 
-            angle = 0.0
+            angle = math.pi
             index = 0
             for range in msg.ranges:
                 if (range > 50.0) or (range < -50.0):
                     range = 0.0
-                x = math.cos(angle) * range * scale
-                y = math.sin(angle) * range * scale
-                self.xs[index] = x
-                self.ys[index] = y
-                self.ss[index] = 1.0
+                else:
+                    x = math.cos(angle) * range * scale
+                    y = math.sin(angle) * range * scale
+                    self.xs[index] = x
+                    self.ys[index] = y
                 angle = angle + msg.angle_increment
                 index = index + 1
 
@@ -263,17 +306,41 @@ class ProximityTable:
             tmp.grid(row=i+1, column=3)
 
 def update_lidar():
-    global lidar_subscriber, lidar_subscriber_exists, ax, fig, scatter_plot
+    global lidar_subscriber, lidar_subscriber_exists, ax, fig, scatter_plot, sonar_subscriber
+    global sonar_scatter_plot0, sonar_scatter_plot1, sonar_scatter_plot2, sonar_scatter_plot3
     if lidar_subscriber_exists:
         xs = lidar_subscriber.xs
         ys = lidar_subscriber.ys
         ss = lidar_subscriber.ss
         # ax.cla()
         
+        sonar_xs = []
+        sonar_ys = []
+        sonar_markers = []
+        for sensor_number in range(sonar_subscriber.number_sensors):
+            ordered_sensor_number = sonar_subscriber.order_map[sensor_number]
+            x_offset = sonar_subscriber.x_offsets[sensor_number]
+            y_offset = sonar_subscriber.y_offsets[sensor_number]
+            x = math.cos(math.pi * (ordered_sensor_number / 2)) * sonar_subscriber.values[sensor_number] + x_offset
+            y = math.sin(math.pi * (ordered_sensor_number / 2)) * sonar_subscriber.values[sensor_number] + y_offset
+            sonar_xs.append(x)
+            sonar_ys.append(y)
+            sonar_markers.append(sonar_subscriber.markers[sensor_number])
+
         if lidar_subscriber.scatter_created:
-            scatter_plot.remove()
-        scatter_plot = ax.scatter(xs, ys, ss, color='r')
-        lidar_subscriber.scatter_created = True
+            scatter_plot.set_offsets(list(zip(xs, ys)))
+            sonar_scatter_plot0.set_offsets([sonar_xs[0], sonar_ys[0]])
+            sonar_scatter_plot1.set_offsets([sonar_xs[1], sonar_ys[1]])
+            sonar_scatter_plot2.set_offsets([sonar_xs[2], sonar_ys[2]])
+            sonar_scatter_plot3.set_offsets([sonar_xs[3], sonar_ys[3]])
+        else:
+            scatter_plot = ax.scatter(xs, ys, ss, color='r')
+            sonar_scatter_plot0 = ax.scatter(sonar_xs[0], sonar_ys[0], marker=sonar_markers[0], color='g')
+            sonar_scatter_plot1 = ax.scatter(sonar_xs[1], sonar_ys[1], marker=sonar_markers[1], color='g')
+            sonar_scatter_plot2 = ax.scatter(sonar_xs[2], sonar_ys[2], marker=sonar_markers[2], color='g')
+            sonar_scatter_plot3 = ax.scatter(sonar_xs[3], sonar_ys[3], marker=sonar_markers[3], color='g')
+            lidar_subscriber.scatter_created = True
+            
         ax.set_xlim([-6, 6])
         ax.set_ylim([-6, 6])
         # ax.draw()
