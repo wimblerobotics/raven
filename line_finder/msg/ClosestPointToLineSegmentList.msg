@@ -1,0 +1,2 @@
+std_msgs/Header header
+ClosestPointToLineSegment[] closest_point_to_line_segments
