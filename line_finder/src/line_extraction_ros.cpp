@@ -1,18 +1,24 @@
 #include "line_finder/line_extraction_ros.hpp"
 
+#include <getopt.h>
+
 #include <cmath>
+#include <fstream>
+#include <iostream>
 
 #include "point_line_util.h"
 #include "rcl_interfaces/msg/set_parameters_result.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "yaml-cpp/yaml.h"
 
+using namespace YAML;
 using std::placeholders::_1;
 
 namespace line_finder {
 
-LineExtractionROS::LineExtractionROS()
+LineExtractionROS::LineExtractionROS(int argc, char *argv[])
     : Node("line_finder_node"), data_cached_(false) {
-  loadParameters();
+  loadParameters(argc, argv);
 
   auto qos = rclcpp::QoS(
       rclcpp::QoSInitialization(RMW_QOS_POLICY_HISTORY_KEEP_LAST, 10));
@@ -177,7 +183,7 @@ rcl_interfaces::msg::SetParametersResult LineExtractionROS::parametersCallback(
 ///////////////////////////////////////////////////////////////////////////////
 // Load ROS parameters
 ///////////////////////////////////////////////////////////////////////////////
-void LineExtractionROS::loadParameters() {
+void LineExtractionROS::loadParameters(int argc, char *argv[]) {
   this->declare_parameter("bearing_std_dev", 1e-3);
   this->declare_parameter<std::string>("frame_id", "base_link");
   this->declare_parameter("least_sq_angle_thresh", 1e-4);
@@ -193,74 +199,176 @@ void LineExtractionROS::loadParameters() {
   this->declare_parameter("range_std_dev", 0.02);
   this->declare_parameter<std::string>("scan_topic", "scan");
 
-  bearing_std_dev_ = this->get_parameter("bearing_std_dev").as_double();
-  line_extraction_.setBearingVariance(bearing_std_dev_ * bearing_std_dev_);
-  RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"),
-                            "bearing_std_dev: %f", bearing_std_dev_);
+  static const struct option long_options[] = {
+      {"config", required_argument, NULL, 'c'},
+      {"ros-args", optional_argument, NULL, 'r'},
+      {NULL, 0, NULL, 0}};
 
-  frame_id_ = this->get_parameter("frame_id").as_string();
+  char *yamlPath = NULL;
+  int opt = 0;
+  int optIndex = 0;
+  while ((opt = getopt_long_only(argc, argv, "c:r", long_options, &optIndex)) !=
+         -1) {
+    switch (opt) {
+      case 'c':
+        yamlPath = optarg;
+        break;
+    }
+  }
+
+  std::ifstream yamlFile;
+  yamlFile.open(yamlPath, std::ifstream::in);
+  YAML::Node config = Load(yamlFile);
+  if (!config.IsMap()) {
+    RCUTILS_LOG_FATAL("[lf] YAML file is not a map kind");
+    exit(-1);
+  }
+
+  YAML::Node twistMultiplexerNode = config["lf"];
+  if (!twistMultiplexerNode.IsMap()) {
+    RCUTILS_LOG_FATAL(
+        "[lf] YAML file does not contain a "
+        "'lf' map");
+    exit(-1);
+  }
+
+  YAML::Node rosParameters = twistMultiplexerNode["ros__parameters"];
+  if (!rosParameters.IsMap()) {
+    RCUTILS_LOG_FATAL(
+        "[lf] YAML file does not contain a "
+        "'ros__parameters' map within the 'lf' map");
+    exit(-1);
+  }
+
+  if (!rosParameters["bearing_std_dev"]) {
+    RCUTILS_LOG_FATAL(
+        "[lf] YAML file does not contain a bearing_std_dev value");
+    exit(-1);
+  }
+  bearing_std_dev_ = rosParameters["bearing_std_dev"].as<double>();
+  line_extraction_.setBearingVariance(bearing_std_dev_ * bearing_std_dev_);
+  RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"), "bearing_std_dev: %f",
+              bearing_std_dev_);
+
+  if (!rosParameters["frame_id"]) {
+    RCUTILS_LOG_FATAL("[lf] YAML file does not contain a frame_id value");
+    exit(-1);
+  }
+  frame_id_ = rosParameters["frame_id"].as<std::string>();
   RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"), "frame_id: %s",
               frame_id_.c_str());
 
-  least_sq_angle_thresh_ =
-      this->get_parameter("least_sq_angle_thresh").as_double();
+  if (!rosParameters["least_sq_angle_thresh"]) {
+    RCUTILS_LOG_FATAL(
+        "[lf] YAML file does not contain a least_sq_angle_thresh value");
+    exit(-1);
+  }
+  least_sq_angle_thresh_ = rosParameters["least_sq_angle_thresh"].as<double>();
   line_extraction_.setLeastSqAngleThresh(least_sq_angle_thresh_);
   RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"),
               "least_sq_angle_thresh: %f", least_sq_angle_thresh_);
 
+  if (!rosParameters["least_sq_radius_thresh"]) {
+    RCUTILS_LOG_FATAL(
+        "[lf] YAML file does not contain a least_sq_radius_thresh value");
+    exit(-1);
+  }
   least_sq_radius_thresh_ =
-      this->get_parameter("least_sq_radius_thresh").as_double();
+      rosParameters["least_sq_radius_thresh"].as<double>();
   line_extraction_.setLeastSqRadiusThresh(least_sq_radius_thresh_);
   RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"),
               "least_sq_radius_thresh: %f", least_sq_radius_thresh_);
 
-  max_line_gap_ = this->get_parameter("max_line_gap").as_double();
+  if (!rosParameters["max_line_gap"]) {
+    RCUTILS_LOG_FATAL("[lf] YAML file does not contain a max_line_gap value");
+    exit(-1);
+  }
+  max_line_gap_ = rosParameters["max_line_gap"].as<double>();
   line_extraction_.setMaxLineGap(max_line_gap_);
   RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"), "max_line_gap: %f",
               max_line_gap_);
 
-  max_range_ = this->get_parameter("max_range").as_double();
+  if (!rosParameters["max_range"]) {
+    RCUTILS_LOG_FATAL("[lf] YAML file does not contain a max_range value");
+    exit(-1);
+  }
+  max_range_ = rosParameters["max_range"].as<double>();
   line_extraction_.setMaxRange(max_range_);
   RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"), "max_range: %f",
               max_range_);
 
-  min_line_length_ = this->get_parameter("min_line_length").as_double();
+  if (!rosParameters["min_line_length"]) {
+    RCUTILS_LOG_FATAL(
+        "[lf] YAML file does not contain a min_line_length value");
+    exit(-1);
+  }
+  min_line_length_ = rosParameters["min_line_length"].as<double>();
   line_extraction_.setMinLineLength(min_line_length_);
   RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"), "min_line_length: %f",
               min_line_length_);
 
-  min_line_points_ = this->get_parameter("min_line_points").as_int();
+  if (!rosParameters["min_line_points"]) {
+    RCUTILS_LOG_FATAL(
+        "[lf] YAML file does not contain a min_line_points value");
+    exit(-1);
+  }
+  min_line_points_ = rosParameters["min_line_points"].as<int>();
   line_extraction_.setMinLinePoints(
       static_cast<unsigned int>(min_line_points_));
   RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"), "min_line_points: %d",
               min_line_points_);
 
-  min_range_ = this->get_parameter("min_range").as_double();
+  if (!rosParameters["min_range"]) {
+    RCUTILS_LOG_FATAL("[lf] YAML file does not contain a min_range value");
+    exit(-1);
+  }
+  min_range_ = rosParameters["min_range"].as<double>();
   line_extraction_.setMinRange(min_range_);
   RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"), "min_range: %f",
               min_range_);
 
-  min_split_dist_ = this->get_parameter("min_split_dist").as_double();
+  if (!rosParameters["min_split_dist"]) {
+    RCUTILS_LOG_FATAL("[lf] YAML file does not contain a min_split_dist value");
+    exit(-1);
+  }
+  min_split_dist_ = rosParameters["min_split_dist"].as<double>();
   line_extraction_.setMinSplitDist(min_split_dist_);
   RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"), "min_split_dist: %f",
               min_split_dist_);
 
-  outlier_dist_ = this->get_parameter("outlier_dist").as_double();
+  if (!rosParameters["outlier_dist"]) {
+    RCUTILS_LOG_FATAL("[lf] YAML file does not contain a outlier_dist value");
+    exit(-1);
+  }
+  outlier_dist_ = rosParameters["outlier_dist"].as<double>();
   line_extraction_.setOutlierDist(outlier_dist_);
   RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"), "outlier_dist: %f",
               outlier_dist_);
 
-  publish_markers_ = this->get_parameter("publish_markers").as_bool();
+  if (!rosParameters["publish_markers"]) {
+    RCUTILS_LOG_FATAL(
+        "[lf] YAML file does not contain a publish_markers value");
+    exit(-1);
+  }
+  publish_markers_ = rosParameters["publish_markers"].as<bool>();
   RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"), "publish_markers: %s",
               publish_markers_ ? "True" : "False");
 
-  range_std_dev_ = this->get_parameter("range_std_dev").as_double();
+  if (!rosParameters["range_std_dev"]) {
+    RCUTILS_LOG_FATAL("[lf] YAML file does not contain a range_std_dev value");
+    exit(-1);
+  }
+  range_std_dev_ = rosParameters["range_std_dev"].as<double>();
   line_extraction_.setRangeVariance(range_std_dev_ * range_std_dev_);
   RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"), "range_std_dev: %f",
               range_std_dev_);
 
-  scan_topic_ = this->get_parameter("scan_topic").as_string();
-  RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"), "scan_topic: %s",
+  if (!rosParameters["scan_topic"]) {
+    RCUTILS_LOG_FATAL("[lf] YAML file does not contain a scan_topic value");
+    exit(-1);
+  }
+  scan_topic_ = rosParameters["scan_topic"].as<std::string>();
+  RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"), "scan_topic_: %s",
               scan_topic_.c_str());
 }
 

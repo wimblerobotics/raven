@@ -5,7 +5,7 @@
 using namespace line_finder;
 int main(int argc, char **argv) {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<LineExtractionROS>();
+  auto node = std::make_shared<LineExtractionROS>(argc, argv);
   rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;

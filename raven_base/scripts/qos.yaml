@@ -2,234 +2,234 @@
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /bluetoothJoystick:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /cmd_vel:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /cmd_vel_joystick:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /cmd_vel_keyboard:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /cmd_vel_navigation:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /global_costmap/costma:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /goal_pose:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /initialpose:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /joint_states:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /line_markers:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /line_markers_array:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /local_costmap/costmap:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /local_costmap/published_footprint:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /local_plan:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /map:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /map_metadata:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /odom:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /parameter_events:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /plan:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /roboclaw_status:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /robot_description:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /scan:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /scan_left_front:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /scan_right_rear:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /sonar0Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /sonar1Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /sonar2Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /sonar3Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /t265/fisheye1/camera_info:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /t265/fisheye1/image_raw:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /t265/fisheye2/camera_info:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /t265/fisheye2/image_raw:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /teensy_diagnostics:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /teensy_stats:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /temperature:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /tf:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /tf_static:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /tof0Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /tof1Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /tof2Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /tof3Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /tof4Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /tof5Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /tof6Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /tof7Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable
 /waypoints:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: best_effort
+  reliability: reliable

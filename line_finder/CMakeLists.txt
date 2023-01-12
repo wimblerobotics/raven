@@ -26,6 +26,7 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(sensor_msgs)
 find_package(std_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/ClosestPointToLineSegment.msg"
@@ -49,7 +50,13 @@ add_executable(
   src/line_extraction_ros.cpp
 )
 
-ament_target_dependencies(lf ${catkin_LIBRARIES})
+ament_target_dependencies(
+  lf
+  rclcpp
+  sensor_msgs
+  yaml-cpp
+  ${catkin_LIBRARIES}
+)
 
 rosidl_target_interfaces(
   lf
@@ -81,13 +88,22 @@ ament_target_dependencies(
   "visualization_msgs"
 )
 
-install(DIRECTORY include/
-  DESTINATION include/
-)
+target_link_libraries(lf ${YAML_CPP_LIBRARIES})
 
 install(
   TARGETS lf
   DESTINATION lib/${PROJECT_NAME}
+)
+
+# Install config files.
+install(DIRECTORY
+  config
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+# Install include files.
+install(DIRECTORY include/
+  DESTINATION include/
 )
 
 # Install launch files.

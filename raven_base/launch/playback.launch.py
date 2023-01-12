@@ -1,5 +1,5 @@
 from ament_index_python.packages import get_package_share_directory
-from launch.actions import IncludeLaunchDescription
+from launch.actions import ExecuteProcess, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 import launch_ros
 import os
@@ -12,7 +12,7 @@ sys.path.append(raven_sub_launch_path)
 import common
 
 def generate_launch_description():
-    do_nav2 = True #os.getenv('DO_NAV2', default=True) in (
+    do_nav2 = False #os.getenv('DO_NAV2', default=True) in (
         # 'True', 'true', '1', 't', 'T')
     do_rviz = True #os.getenv('DO_RVIZ', default=True) in (
         # 'True', 'true', '1', 't', 'T')
@@ -34,6 +34,19 @@ def generate_launch_description():
                 '/launch/sub_launch/nav2_stack.launch.py'
             ]), )
         common.ld.add_action(nav2_launch)
+    
+    # Playback
+    play_launch = ExecuteProcess(
+        cmd=[
+            "ros2",
+            "bag",
+            "play",
+            "--loop",
+            "/home/ros/bag/bag_0.db3"
+        ],
+        output="screen"
+    )
+    common.ld.add_action(play_launch)
 
     # Bring up rviz2
     rviz_config_dir = os.path.join(

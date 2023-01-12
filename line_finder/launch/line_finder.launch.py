@@ -2,19 +2,40 @@ import os
 import launch
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch_ros.actions import Node
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, TextSubstitution, PathJoinSubstitution
+from launch_ros.actions import Node
+
 
 def generate_launch_description():
+    do_standalone = True
+
+    raven_description_directory_path = get_package_share_directory(
+        'raven_description')
+
+    configFilePath = os.path.join(
+        get_package_share_directory('line_finder'),
+        'config',
+        'line_finder.yaml'
+    )
 
     ld = LaunchDescription()
+
+    if (do_standalone):
+        # Bring up the robot description (URDF).
+        raven_description_launch = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                raven_description_directory_path, '/launch/raven_description.launch.py'
+            ]))
+
     line_finder_node = Node(
-        # prefix=['xterm -e gdb -ex run --args'],
-        package = 'line_finder',
-        executable = 'lf',
-        name = 'line_finder',
-        output = 'screen'
+        arguments=['--config', configFilePath],
+        executable='lf',
+        name='line_finder',
+        package='line_finder',
+        # prefix=["xterm -geometry 200x30 -e gdb -ex run --args"],
+        output='screen'
     )
 
     ld.add_action(line_finder_node)

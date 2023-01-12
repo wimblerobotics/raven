@@ -21,7 +21,7 @@ namespace line_finder {
 class LineExtractionROS : public rclcpp::Node {
  public:
   // Constructor / destructor
-  LineExtractionROS();
+  LineExtractionROS(int argc, char *argv[]);
   ~LineExtractionROS();
   // Running
 //   void run();
@@ -56,7 +56,7 @@ class LineExtractionROS : public rclcpp::Node {
   LineExtraction line_extraction_;
   bool data_cached_;  // true after first scan used to cache data
   // Members
-  void loadParameters();
+  void loadParameters(int argc, char *argv[]);
   void populateClosetPointToLineSegListMsg(
       const std::vector<Line> &,
       line_finder::msg::ClosestPointToLineSegmentList &line_list_msg);
