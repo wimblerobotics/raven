@@ -16,13 +16,14 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 add_compile_options(-g)
-add_subdirectory(matplotplusplus)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 find_package(geometry_msgs REQUIRED)
+find_package(matplotlib_cpp REQUIRED)
+find_package(PythonLibs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(sensor_msgs)
@@ -79,27 +80,33 @@ add_executable(
   src/laser_accumulator_node.cpp
 )
 
-target_link_libraries(
-  laser_accumulator
-  geometry_msgs
-  # matplot
-  rclcpp
-  sensor_msgs
-  tf2_ros
-)
-
-# ament_target_dependencies(
+# target_link_libraries(
 #   laser_accumulator
 #   geometry_msgs
-#   matplot
+#   # matplot
 #   rclcpp
 #   sensor_msgs
 #   tf2_ros
 # )
 
+target_link_libraries(laser_accumulator
+  ${PYTHON_LIBRARIES}
+)
+
+ament_target_dependencies(
+  laser_accumulator
+  geometry_msgs
+  matplotlib_cpp
+  rclcpp
+  sensor_msgs
+  tf2_ros
+)
+
 target_include_directories(
   laser_accumulator
   PUBLIC
+  matplotlib_cpp
+  include_directories(${PYTHON_INCLUDE_DIRS})
   ${rclcpp_INCLUDE_DIRS}
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
