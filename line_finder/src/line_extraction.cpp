@@ -159,22 +159,21 @@ void LineExtraction::filterOutlierPoints() {
     // Get two closest neighbours
 
     p_i = filtered_indices_[i];
-    if (i == 0)  // first point
-    {
+    if (i == 0) {
+      // first point
       p_j = filtered_indices_[i + 1];
       p_k = filtered_indices_[i + 2];
-    } else if (i == filtered_indices_.size() - 1)  // last point
-    {
+    } else if (i == filtered_indices_.size() - 1) {
+      // last point
       p_j = filtered_indices_[i - 1];
       p_k = filtered_indices_[i - 2];
-    } else  // middle points
-    {
+    } else {
+      // middle points
       p_j = filtered_indices_[i - 1];
       p_k = filtered_indices_[i + 1];
     }
 
     // Check if point is an outlier
-
     if (fabs(r_data_.ranges[p_i] - r_data_.ranges[p_j]) >
             params_.outlier_dist &&
         fabs(r_data_.ranges[p_i] - r_data_.ranges[p_k]) >
@@ -199,7 +198,7 @@ void LineExtraction::filterOutlierPoints() {
 ///////////////////////////////////////////////////////////////////////////////
 // Filtering and merging lines
 ///////////////////////////////////////////////////////////////////////////////
-void LineExtraction::filterLines() {
+void LineExtraction::filterLines() {  // middle points
   std::vector<Line> output;
   for (std::vector<Line>::const_iterator cit = lines_.begin();
        cit != lines_.end(); ++cit) {

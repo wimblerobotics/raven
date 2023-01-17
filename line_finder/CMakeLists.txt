@@ -6,9 +6,9 @@ if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
 endif()
 
-# Default to C++14
+# Default to C++17
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -16,15 +16,18 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 add_compile_options(-g)
+add_subdirectory(matplotplusplus)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(sensor_msgs)
 find_package(std_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
@@ -52,21 +55,13 @@ add_executable(
 
 ament_target_dependencies(
   lf
+  Eigen3
   rclcpp
+  rosidl_default_generators
   sensor_msgs
+  visualization_msgs
   yaml-cpp
   ${catkin_LIBRARIES}
-)
-
-rosidl_target_interfaces(
-  lf
-  ${PROJECT_NAME}
-  "rosidl_typesupport_cpp"
-)
-
-ament_target_dependencies(
-  lf
-  rclcpp
 )
 
 target_include_directories(
@@ -78,20 +73,55 @@ target_include_directories(
   $<INSTALL_INTERFACE:include>
 )
 
-target_compile_features(lf PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
-ament_target_dependencies(
+add_executable(
+  laser_accumulator
+  src/laser_accumulator.cpp
+  src/laser_accumulator_node.cpp
+)
+
+target_link_libraries(
+  laser_accumulator
+  geometry_msgs
+  # matplot
+  rclcpp
+  sensor_msgs
+  tf2_ros
+)
+
+# ament_target_dependencies(
+#   laser_accumulator
+#   geometry_msgs
+#   matplot
+#   rclcpp
+#   sensor_msgs
+#   tf2_ros
+# )
+
+target_include_directories(
+  laser_accumulator
+  PUBLIC
+  ${rclcpp_INCLUDE_DIRS}
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+#target_link_libraries(laser_accumulator PUBLIC matplot)
+
+rosidl_target_interfaces(
   lf
-  Eigen3
-  "rclcpp"
-  "rosidl_default_generators"
-  "sensor_msgs"
-  "visualization_msgs"
+  ${PROJECT_NAME}
+  "rosidl_typesupport_cpp"
 )
 
 target_link_libraries(lf ${YAML_CPP_LIBRARIES})
 
 install(
   TARGETS lf
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+  TARGETS laser_accumulator
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -109,6 +139,12 @@ install(DIRECTORY include/
 # Install launch files.
 install(DIRECTORY
   launch
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+# Install script files.
+install(DIRECTORY
+  scripts
   DESTINATION share/${PROJECT_NAME}/
 )
 
