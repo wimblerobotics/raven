@@ -21,8 +21,12 @@ class LaserAccumulator : public rclcpp::Node {
   std::string scan_topic_;
 
   void laserScanCallback(
-      const sensor_msgs::msg::LaserScan::ConstSharedPtr) const;
+      const sensor_msgs::msg::LaserScan::ConstSharedPtr);
 
   void loadParameters();
+
+  void manage_scan(const sensor_msgs::msg::LaserScan::ConstSharedPtr scan_msg);
+
+  static int8_t points_ [600][600];
 };
 }  // namespace laser_accumulator
