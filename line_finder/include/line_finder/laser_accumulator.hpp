@@ -27,6 +27,6 @@ class LaserAccumulator : public rclcpp::Node {
 
   void manage_scan(const sensor_msgs::msg::LaserScan::ConstSharedPtr scan_msg);
 
-  static int8_t points_ [600][600];
+  static uint8_t points_ [600][600];
 };
 }  // namespace laser_accumulator

@@ -83,7 +83,7 @@ void LaserAccumulator::manage_scan(
           }
         }
       }
-      
+
       geometry_msgs::msg::TransformStamped transform_stamped =
           tf_buffer_->lookupTransform("odom", scan_msg->header.frame_id,
                                       tf2::TimePointZero);
@@ -97,8 +97,8 @@ void LaserAccumulator::manage_scan(
           int x_coord = 300 + (x * 100);
           int y_coord = 300 + (y * 100);
           if ((x_coord >= 0) && (y_coord >= 0) && (x_coord < 600) &&
-              (y_coord < 600) && (points_[x_coord][y_coord] < 127)) {
-            points_[x_coord][y_coord] += 1;
+              (y_coord < 600) && (points_[x_coord][y_coord] < 250)) {
+            points_[x_coord][y_coord] += 5;
           }
         }
         angle += scan_msg->angle_increment;
@@ -123,12 +123,15 @@ void LaserAccumulator::laserScanCallback(
     }
   }
 
+  plt::clf();
+  plt::xlim(-1.0, 1.0);
+  plt::ylim(-1.0, 1.0);
   plt::scatter(xs, ys);
   plt::pause(0.001);
 }
 
 void LaserAccumulator::loadParameters() { scan_topic_ = "/scan"; }
 
-int8_t LaserAccumulator::points_[600][600];
+uint8_t LaserAccumulator::points_[600][600];
 
 }  // namespace laser_accumulator
