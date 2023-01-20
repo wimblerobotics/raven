@@ -28,6 +28,7 @@ find_package(rclcpp REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(sensor_msgs)
 find_package(std_msgs REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(yaml-cpp REQUIRED)
@@ -80,15 +81,6 @@ add_executable(
   src/laser_accumulator_node.cpp
 )
 
-# target_link_libraries(
-#   laser_accumulator
-#   geometry_msgs
-#   # matplot
-#   rclcpp
-#   sensor_msgs
-#   tf2_ros
-# )
-
 target_link_libraries(laser_accumulator
   ${PYTHON_LIBRARIES}
 )
@@ -99,6 +91,7 @@ ament_target_dependencies(
   matplotlib_cpp
   rclcpp
   sensor_msgs
+  tf2_geometry_msgs
   tf2_ros
 )
 
@@ -111,8 +104,6 @@ target_include_directories(
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
-
-#target_link_libraries(laser_accumulator PUBLIC matplot)
 
 rosidl_target_interfaces(
   lf

@@ -2,17 +2,17 @@
 
 #include "line_finder/laser_accumulator.hpp"
 
-#include <geometry_msgs/msg/pose_stamped.hpp>
-// #include <tf2/LinearMath/Transform.h>
-#include <tf2_ros/buffer.h>
-// #include <tf2_ros/transform_listener.h>
 #include <matplotlibcpp.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2_ros/buffer.h>
 
+#include <geometry_msgs/msg/pose_stamped.hpp>
 #include <iostream>
 #include <vector>
 
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
+
 using std::placeholders::_1;
 namespace plt = matplotlibcpp;
 
@@ -31,23 +31,6 @@ LaserAccumulator::LaserAccumulator() : Node("laser_accumulator_node") {
       "/scan", qos, std::bind(&LaserAccumulator::laserScanCallback, this, _1));
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(get_clock());
   tfListener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
-
-  // ###
-  //  int n = 5000; // number of data points
-  //  std::vector<double> x(n),y(n);
-  //  for(int i=0; i<n; ++i) {
-  //      double t = 2*M_PI*i/n;
-  //      x.at(i) = 16*sin(t)*sin(t)*sin(t);
-  //      y.at(i) = 13*cos(t) - 5*cos(2*t) - 2*cos(3*t) - cos(4*t);
-  //  }
-
-  // // plot() takes an arbitrary number of (x,y,format)-triples.
-  // // x must be iterable (that is, anything providing begin(x) and end(x)),
-  // // y must either be callable (providing operator() const) or iterable.
-  // plt::plot(x, y, "r-", x, [](double d) { return 12.5+abs(sin(d)); }, "k-");
-
-  // // show plots
-  // plt::show();  //###
 }
 
 LaserAccumulator::~LaserAccumulator() {}
@@ -89,13 +72,15 @@ void LaserAccumulator::manage_scan(
                                       tf2::TimePointZero);
       float angle = scan_msg->angle_min;
       for (float range : scan_msg->ranges) {
-        if ((range < (float) kMAX_RANGE) && (range > -(float) kMAX_RANGE)) {
-          float x =
-              (range * cos(angle)) - transform_stamped.transform.translation.x;
-          float y =
-              (range * sin(angle)) - transform_stamped.transform.translation.y;
-          int x_coord = (x * kPIXELS_PER_METER) + (kMAP_PIXELS / 2);
-          int y_coord = (y * kPIXELS_PER_METER) + (kMAP_PIXELS / 2);
+        if ((range < (float)kMAX_RANGE) && (range > -(float)kMAX_RANGE)) {
+          geometry_msgs::msg::PointStamped in, out;
+          in.header = scan_msg->header;
+          in.point.x = range * cos(angle);
+          in.point.y = range * sin(angle);
+          in.point.z = 0;
+          tf_buffer_->transform(in, out, "odom");
+          int x_coord = (out.point.x * kPIXELS_PER_METER) + (kMAP_PIXELS / 2);
+          int y_coord = (out.point.y * kPIXELS_PER_METER) + (kMAP_PIXELS / 2);
           if ((x_coord >= 0) && (y_coord >= 0) &&
               ((uint32_t)x_coord < kMAP_PIXELS) &&
               ((uint32_t)y_coord < kMAP_PIXELS) &&
