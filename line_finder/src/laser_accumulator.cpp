@@ -56,8 +56,8 @@ void LaserAccumulator::manage_scan(
     const sensor_msgs::msg::LaserScan::ConstSharedPtr scan_msg) {
   static bool initialized = false;
   if (!initialized) {
-    for (size_t i = 0; i < 600; i++) {
-      for (size_t j = 0; j < 600; j++) {
+    for (size_t i = 0; i < kMAP_PIXELS; i++) {
+      for (size_t j = 0; j < kMAP_PIXELS; j++) {
         points_[i][j] = 0;
       }
     }
@@ -76,8 +76,8 @@ void LaserAccumulator::manage_scan(
                   scan_msg->header.frame_id.c_str(), "odom",
                   scan_msg->header.stamp.sec, scan_msg->header.stamp.nanosec);
     } else {
-      for (size_t i = 0; i < 600; i++) {
-        for (size_t j = 0; j < 600; j++) {
+      for (size_t i = 0; i < kMAP_PIXELS; i++) {
+        for (size_t j = 0; j < kMAP_PIXELS; j++) {
           if (points_[i][j] > 0) {
             points_[i][j] -= 1;
           }
@@ -89,16 +89,18 @@ void LaserAccumulator::manage_scan(
                                       tf2::TimePointZero);
       float angle = scan_msg->angle_min;
       for (float range : scan_msg->ranges) {
-        if ((range < 50.0) && (range > -50.0)) {
+        if ((range < (float) kMAX_RANGE) && (range > -(float) kMAX_RANGE)) {
           float x =
               (range * cos(angle)) - transform_stamped.transform.translation.x;
           float y =
               (range * sin(angle)) - transform_stamped.transform.translation.y;
-          int x_coord = 300 + (x * 100);
-          int y_coord = 300 + (y * 100);
-          if ((x_coord >= 0) && (y_coord >= 0) && (x_coord < 600) &&
-              (y_coord < 600) && (points_[x_coord][y_coord] < 250)) {
-            points_[x_coord][y_coord] += 5;
+          int x_coord = (x * kPIXELS_PER_METER) + (kMAP_PIXELS / 2);
+          int y_coord = (y * kPIXELS_PER_METER) + (kMAP_PIXELS / 2);
+          if ((x_coord >= 0) && (y_coord >= 0) &&
+              ((uint32_t)x_coord < kMAP_PIXELS) &&
+              ((uint32_t)y_coord < kMAP_PIXELS) &&
+              (points_[x_coord][y_coord] < kMAX_PERSISTENCE)) {
+            points_[x_coord][y_coord] += kPERSISTENCE;
           }
         }
         angle += scan_msg->angle_increment;
@@ -114,24 +116,24 @@ void LaserAccumulator::laserScanCallback(
   manage_scan(scan_msg);
   std::vector<float> xs(scan_msg->ranges.size());
   std::vector<float> ys(scan_msg->ranges.size());
-  for (size_t x = 0; x < 600; x++) {
-    for (size_t y = 0; y < 600; y++) {
+  for (size_t x = 0; x < kMAP_PIXELS; x++) {
+    for (size_t y = 0; y < kMAP_PIXELS; y++) {
       if (points_[x][y] > 0) {
-        xs.push_back((x - 300.0) / 300.0);
-        ys.push_back((y - 300.0) / 300.0);
+        xs.push_back((x / (kPIXELS_PER_METER * 1.0) - kMAX_RANGE));
+        ys.push_back((y / (kPIXELS_PER_METER * 1.0) - kMAX_RANGE));
       }
     }
   }
 
   plt::clf();
-  plt::xlim(-1.0, 1.0);
-  plt::ylim(-1.0, 1.0);
+  plt::xlim(-(kMAX_RANGE * 1.0), kMAX_RANGE * 1.0);
+  plt::ylim(-(kMAX_RANGE * 1.0), kMAX_RANGE * 1.0);
   plt::scatter(xs, ys);
   plt::pause(0.001);
 }
 
 void LaserAccumulator::loadParameters() { scan_topic_ = "/scan"; }
 
-uint8_t LaserAccumulator::points_[600][600];
+uint8_t LaserAccumulator::points_[kMAP_PIXELS][kMAP_PIXELS];
 
 }  // namespace laser_accumulator

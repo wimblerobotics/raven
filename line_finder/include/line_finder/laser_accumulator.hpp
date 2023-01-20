@@ -27,6 +27,11 @@ class LaserAccumulator : public rclcpp::Node {
 
   void manage_scan(const sensor_msgs::msg::LaserScan::ConstSharedPtr scan_msg);
 
-  static uint8_t points_ [600][600];
+  static const uint8_t kPERSISTENCE = 3;
+  static const uint8_t kMAX_PERSISTENCE = 5;
+  static const uint32_t kMAX_RANGE = 3;
+  static const uint8_t kPIXELS_PER_METER = 20;
+  static const uint32_t kMAP_PIXELS = (uint32_t)(kPIXELS_PER_METER * kMAX_RANGE * 2);
+  static uint8_t points_ [kMAP_PIXELS][kMAP_PIXELS];
 };
 }  // namespace laser_accumulator
