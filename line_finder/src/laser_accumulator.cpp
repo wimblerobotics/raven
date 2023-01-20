@@ -18,7 +18,10 @@ namespace plt = matplotlibcpp;
 
 namespace laser_accumulator {
 
-LaserAccumulator::LaserAccumulator() : Node("laser_accumulator_node") {
+LaserAccumulator::LaserAccumulator()
+    : Node("laser_accumulator_node"),
+      initial_persistence_count_(3),
+      max_persistence_count_(5) {
   loadParameters();
 
   auto qos = rclcpp::QoS(
@@ -31,9 +34,61 @@ LaserAccumulator::LaserAccumulator() : Node("laser_accumulator_node") {
       "/scan", qos, std::bind(&LaserAccumulator::laserScanCallback, this, _1));
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(get_clock());
   tfListener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+
+  parameter_callback_handle_ = add_on_set_parameters_callback(std::bind(
+      &LaserAccumulator::parametersCallback, this, std::placeholders::_1));
 }
 
 LaserAccumulator::~LaserAccumulator() {}
+
+rcl_interfaces::msg::SetParametersResult LaserAccumulator::parametersCallback(
+    const std::vector<rclcpp::Parameter> &parameters) {
+  auto result = rcl_interfaces::msg::SetParametersResult();
+
+  result.successful = true;
+  result.reason = "success";
+  for (const auto &parameter : parameters) {
+    if ((parameter.get_name() == "initial_persistence_count") &&
+        (parameter.get_type() == rclcpp::ParameterType::PARAMETER_INTEGER)) {
+      initial_persistence_count_ = parameter.as_int();
+      if ((initial_persistence_count_ > 0) &&
+          (initial_persistence_count_ < 250)) {
+        RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"),
+                    "Parameter '%s' changed: %d", parameter.get_name().c_str(),
+                    initial_persistence_count_);
+      } else {
+        RCLCPP_ERROR(rclcpp::get_logger("LaserAccumulator"),
+                     "Parameter '%s' not in [1..249]: %d",
+                     parameter.get_name().c_str(), initial_persistence_count_);
+        result.successful = false;
+        result.reason =
+            "Parameter 'initial_persistence_count' is not in [1..249]";
+        initial_persistence_count_ = 3;
+      }
+    } else if ((parameter.get_name() == "max_persistence_count") &&
+               (parameter.get_type() ==
+                rclcpp::ParameterType::PARAMETER_INTEGER)) {
+      max_persistence_count_ = parameter.as_int();
+      if ((max_persistence_count_ > 0) && (max_persistence_count_ < 250)) {
+        RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"),
+                    "Parameter '%s' changed: %d", parameter.get_name().c_str(),
+                    max_persistence_count_);
+      } else {
+        RCLCPP_ERROR(rclcpp::get_logger("LaserAccumulator"),
+                     "Parameter '%s' not in [1..249]: %d",
+                     parameter.get_name().c_str(), max_persistence_count_);
+        result.successful = false;
+        result.reason = "Parameter 'max_persistence_count' is not in [1..249]";
+        max_persistence_count_ = 5;
+      }
+    } else {
+      RCLCPP_ERROR(rclcpp::get_logger("LaserAccumulator"),
+                   "Invalid parameter: %s", parameter.get_name().c_str());
+    }
+  }
+
+  return result;
+}
 
 void LaserAccumulator::manage_scan(
     const sensor_msgs::msg::LaserScan::ConstSharedPtr scan_msg) {
@@ -84,14 +139,14 @@ void LaserAccumulator::manage_scan(
           if ((x_coord >= 0) && (y_coord >= 0) &&
               ((uint32_t)x_coord < kMAP_PIXELS) &&
               ((uint32_t)y_coord < kMAP_PIXELS) &&
-              (points_[x_coord][y_coord] < kMAX_PERSISTENCE)) {
-            points_[x_coord][y_coord] += kPERSISTENCE;
+              (points_[x_coord][y_coord] < max_persistence_count_)) {
+            points_[x_coord][y_coord] += initial_persistence_count_;
           }
         }
         angle += scan_msg->angle_increment;
       }
     }
-  } catch (tf2::TransformException& ex) {
+  } catch (tf2::TransformException &ex) {
     std::cout << "Exception: " << ex.what() << std::endl;
   }
 }
@@ -117,7 +172,44 @@ void LaserAccumulator::laserScanCallback(
   plt::pause(0.001);
 }
 
-void LaserAccumulator::loadParameters() { scan_topic_ = "/scan"; }
+void LaserAccumulator::loadParameters() {
+  std::string initial_persistence_count_name = "initial_persistence_count";
+  rcl_interfaces::msg::ParameterDescriptor initial_persistence_count_descriptor;
+  initial_persistence_count_descriptor.name = initial_persistence_count_name;
+  initial_persistence_count_descriptor.type =
+      rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;
+  initial_persistence_count_descriptor.description =
+      "The initial persistence count for a scan point, in [1..249]";
+  rcl_interfaces::msg::IntegerRange initial_persistence_count_range;
+  initial_persistence_count_range.from_value = 1;
+  initial_persistence_count_range.to_value = 249;
+  initial_persistence_count_range.step = 1;
+  initial_persistence_count_descriptor.integer_range.push_back(
+      initial_persistence_count_range);
+  int initial_persistence_count_default = 3;
+  declare_parameter(initial_persistence_count_name,
+                    initial_persistence_count_default,
+                    initial_persistence_count_descriptor);
+
+  std::string max_persistence_name = "max_persistence_count";
+  rcl_interfaces::msg::ParameterDescriptor max_persistence_count_descriptor;
+  max_persistence_count_descriptor.name = max_persistence_name;
+  max_persistence_count_descriptor.type =
+      rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;
+  max_persistence_count_descriptor.description =
+      "The maximum persistence count for a scan point, in [1..249]";
+  rcl_interfaces::msg::IntegerRange max_persistence_count_range;
+  max_persistence_count_range.from_value = 1;
+  max_persistence_count_range.to_value = 249;
+  max_persistence_count_range.step = 1;
+  max_persistence_count_descriptor.integer_range.push_back(
+      max_persistence_count_range);
+  int max_persistence_count_default = 5;
+  declare_parameter(max_persistence_name, max_persistence_count_default,
+                    max_persistence_count_descriptor);
+
+  scan_topic_ = "/scan";
+}
 
 uint8_t LaserAccumulator::points_[kMAP_PIXELS][kMAP_PIXELS];
 
