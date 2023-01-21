@@ -32,17 +32,7 @@ def generate_launch_description():
             PythonLaunchDescriptionSource([
                 common.raven_base_directory_path,
                 '/launch/sub_launch/nav2_stack.launch.py'
-            ]), )ExecuteProcess(
-            cmd=[
-                "ros2",
-                "bag",
-                "play",
-                "--loop",
-                "/home/ros/bag/bag_0.db3"
-            ],
-            output="screen"
-        )
-        common.ld.add_
+            ]), )
         common.ld.add_action(nav2_launch)
     
     # Playback
