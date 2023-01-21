@@ -30,10 +30,12 @@ LaserAccumulator::LaserAccumulator()
   qos.durability(RMW_QOS_POLICY_DURABILITY_SYSTEM_DEFAULT);
   qos.avoid_ros_namespace_conventions(false);
 
+  lidar_pub_ = this->create_publisher<sensor_msgs::msg::LaserScan>(
+      "persistent_scan", 10);
   scan_subscriber_ = create_subscription<sensor_msgs::msg::LaserScan>(
       "/scan", qos, std::bind(&LaserAccumulator::laserScanCallback, this, _1));
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(get_clock());
-  tfListener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
   parameter_callback_handle_ = add_on_set_parameters_callback(std::bind(
       &LaserAccumulator::parametersCallback, this, std::placeholders::_1));
@@ -151,9 +153,65 @@ void LaserAccumulator::manage_scan(
   }
 }
 
+bool LaserAccumulator::neighborIsInRange(int x, int y) {
+  const int neighbor_range = 3;
+  for (int x_coord = x - neighbor_range; x_coord < x + neighbor_range;
+       x_coord++) {
+    for (int y_coord = y - neighbor_range; y_coord < y + neighbor_range;
+         y_coord++) {
+      if ((x_coord >= 0) && (x_coord < kMAP_PIXELS) && (y_coord >= 0) &&
+          (y_coord < kMAP_PIXELS)) {
+        if (points_[x_coord][y_coord] > 0) {
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
 void LaserAccumulator::laserScanCallback(
     const sensor_msgs::msg::LaserScan::ConstSharedPtr scan_msg) {
   manage_scan(scan_msg);
+
+  sensor_msgs::msg::LaserScan new_scan;
+  new_scan = *scan_msg;
+  new_scan.header.frame_id = "odom";
+  float angle = scan_msg->angle_min;
+  for (size_t i = 0; i < scan_msg->ranges.size(); i++) {
+    // Computer a new set of scans
+    new_scan.ranges[i] = 0.0;  // Wipe out old scan value for the angle.
+    for (size_t r = 0; r < kMAX_RANGE * kPIXELS_PER_METER; r++) {
+      // Look along a radius line from [0, 0] in th odom frame.
+      float radius =
+          (float)r /
+          kPIXELS_PER_METER;  // Radius corresponding to array coordinate.
+      int x = (radius * cos(angle) * kPIXELS_PER_METER) + (kMAP_PIXELS / 2);
+      int y = (radius * sin(angle) * kPIXELS_PER_METER) + (kMAP_PIXELS / 2);
+      if (neighborIsInRange(x, y)) {
+        new_scan.ranges[i] = radius;
+        break;  // Advance to the next scan radius.
+      }
+      // // int x = int(((radius * cos(angle)) * kPIXELS_PER_METER) + 0.5) +
+      // //         (kMAP_PIXELS / 2);
+      // // int y = int(((radius * sin(angle)) * kPIXELS_PER_METER) + 0.5) +
+      // //         (kMAP_PIXELS / 2);
+      // if ((x >= 0) && (x < kMAP_PIXELS) && (y >= 0) && (y < kMAP_PIXELS) &&
+      //     (points_[x][y] > 0)) {
+      //   // We have found a persistent point.
+      //   // Take the nearest radius that shows a point, as further points
+      //   // along the raidus line would be obscured by this point.
+      //   new_scan.ranges[i] = radius;
+      //   break;  // Advance to the next scan radius.
+      // }
+    }
+
+    angle += scan_msg->angle_increment;
+  }
+
+  lidar_pub_->publish(new_scan);
+
   std::vector<float> xs(scan_msg->ranges.size());
   std::vector<float> ys(scan_msg->ranges.size());
   for (size_t x = 0; x < kMAP_PIXELS; x++) {
