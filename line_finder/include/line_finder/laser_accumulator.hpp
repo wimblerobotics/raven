@@ -21,6 +21,7 @@ class LaserAccumulator : public rclcpp::Node {
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr
       parameter_callback_handle_;
 
+  bool do_plot_;
   std::string scan_topic_;
 
   void laserScanCallback(const sensor_msgs::msg::LaserScan::ConstSharedPtr);

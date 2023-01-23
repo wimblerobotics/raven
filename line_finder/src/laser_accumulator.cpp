@@ -20,6 +20,7 @@ namespace laser_accumulator {
 
 LaserAccumulator::LaserAccumulator()
     : Node("laser_accumulator_node"),
+      do_plot_(false),
       initial_persistence_count_(3),
       max_persistence_count_(5) {
   loadParameters();
@@ -50,8 +51,15 @@ rcl_interfaces::msg::SetParametersResult LaserAccumulator::parametersCallback(
   result.successful = true;
   result.reason = "success";
   for (const auto &parameter : parameters) {
-    if ((parameter.get_name() == "initial_persistence_count") &&
-        (parameter.get_type() == rclcpp::ParameterType::PARAMETER_INTEGER)) {
+    if ((parameter.get_name() == "do_plot") &&
+        (parameter.get_type() == rclcpp::ParameterType::PARAMETER_BOOL)) {
+      do_plot_ = parameter.as_bool();
+      RCLCPP_INFO(rclcpp::get_logger("LineExtractionROS"),
+                  "Parameter '%s' changed: %s", parameter.get_name().c_str(),
+                  do_plot_ ? "True" : "False");
+    } else if ((parameter.get_name() == "initial_persistence_count") &&
+               (parameter.get_type() ==
+                rclcpp::ParameterType::PARAMETER_INTEGER)) {
       initial_persistence_count_ = parameter.as_int();
       if ((initial_persistence_count_ > 0) &&
           (initial_persistence_count_ < 250)) {
@@ -168,13 +176,14 @@ void LaserAccumulator::laserScanCallback(
   for (size_t x_coord = 0; x_coord < kMAP_PIXELS; x_coord++) {
     for (size_t y_coord = 0; y_coord < kMAP_PIXELS; y_coord++) {
       float offset = kMAP_PIXELS / 2.0;
-      float px = x_coord - offset; // Offset to represent real coordinates.
+      float px = x_coord - offset;  // Offset to represent real coordinates.
       float py = y_coord - offset;
-      px = px / kPIXELS_PER_METER; // Scale.
+      px = px / kPIXELS_PER_METER;  // Scale.
       py = py / kPIXELS_PER_METER;
       float distance_to_point = sqrt((px * px) + (py * py));
       float angle_to_point = atan2(py, px);
-      int angle_slot = (angle_to_point - scan_msg->angle_min) / scan_msg->angle_increment;
+      int angle_slot =
+          (angle_to_point - scan_msg->angle_min) / scan_msg->angle_increment;
       if (points_[x_coord][y_coord] > 0) {
         // Found a persisteng point.
         if (distance_to_point < new_scan.ranges[angle_slot]) {
@@ -186,25 +195,35 @@ void LaserAccumulator::laserScanCallback(
 
   lidar_pub_->publish(new_scan);
 
-  std::vector<float> xs(scan_msg->ranges.size());
-  std::vector<float> ys(scan_msg->ranges.size());
-  for (size_t x = 0; x < kMAP_PIXELS; x++) {
-    for (size_t y = 0; y < kMAP_PIXELS; y++) {
-      if (points_[x][y] > 0) {
-        xs.push_back((x / (kPIXELS_PER_METER * 1.0) - kMAX_RANGE));
-        ys.push_back((y / (kPIXELS_PER_METER * 1.0) - kMAX_RANGE));
+  if (do_plot_) {
+    std::vector<float> xs(scan_msg->ranges.size());
+    std::vector<float> ys(scan_msg->ranges.size());
+    for (size_t x = 0; x < kMAP_PIXELS; x++) {
+      for (size_t y = 0; y < kMAP_PIXELS; y++) {
+        if (points_[x][y] > 0) {
+          xs.push_back((x / (kPIXELS_PER_METER * 1.0) - kMAX_RANGE));
+          ys.push_back((y / (kPIXELS_PER_METER * 1.0) - kMAX_RANGE));
+        }
       }
     }
-  }
 
-  plt::clf();
-  plt::xlim(-(kMAX_RANGE * 1.0), kMAX_RANGE * 1.0);
-  plt::ylim(-(kMAX_RANGE * 1.0), kMAX_RANGE * 1.0);
-  plt::scatter(xs, ys);
-  plt::pause(0.001);
+    plt::clf();
+    plt::xlim(-(kMAX_RANGE * 1.0), kMAX_RANGE * 1.0);
+    plt::ylim(-(kMAX_RANGE * 1.0), kMAX_RANGE * 1.0);
+    plt::scatter(xs, ys);
+    plt::pause(0.001);
+  }
 }
 
 void LaserAccumulator::loadParameters() {
+  std::string do_plot_name = "do_plot";
+  rcl_interfaces::msg::ParameterDescriptor do_plot_descriptor;
+  do_plot_descriptor.name = do_plot_name;
+  do_plot_descriptor.type = rcl_interfaces::msg::ParameterType::PARAMETER_BOOL;
+  do_plot_descriptor.description = "Show the scatter plot?";
+  bool do_plot_default = false;
+  declare_parameter(do_plot_name, do_plot_default, do_plot_descriptor);
+
   std::string initial_persistence_count_name = "initial_persistence_count";
   rcl_interfaces::msg::ParameterDescriptor initial_persistence_count_descriptor;
   initial_persistence_count_descriptor.name = initial_persistence_count_name;
