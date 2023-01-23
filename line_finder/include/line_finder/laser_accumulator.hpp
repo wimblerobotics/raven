@@ -29,8 +29,6 @@ class LaserAccumulator : public rclcpp::Node {
 
   void manage_scan(const sensor_msgs::msg::LaserScan::ConstSharedPtr scan_msg);
 
-  bool neighborIsInRange(int x, int y);
-
   rcl_interfaces::msg::SetParametersResult parametersCallback(
       const std::vector<rclcpp::Parameter> &parameters);
 

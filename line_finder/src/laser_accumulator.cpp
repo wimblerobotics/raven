@@ -153,24 +153,6 @@ void LaserAccumulator::manage_scan(
   }
 }
 
-bool LaserAccumulator::neighborIsInRange(int x, int y) {
-  const int neighbor_range = 3;
-  for (int x_coord = x - neighbor_range; x_coord < x + neighbor_range;
-       x_coord++) {
-    for (int y_coord = y - neighbor_range; y_coord < y + neighbor_range;
-         y_coord++) {
-      if ((x_coord >= 0) && (x_coord < kMAP_PIXELS) && (y_coord >= 0) &&
-          (y_coord < kMAP_PIXELS)) {
-        if (points_[x_coord][y_coord] > 0) {
-          return true;
-        }
-      }
-    }
-  }
-
-  return false;
-}
-
 void LaserAccumulator::laserScanCallback(
     const sensor_msgs::msg::LaserScan::ConstSharedPtr scan_msg) {
   manage_scan(scan_msg);
@@ -178,36 +160,28 @@ void LaserAccumulator::laserScanCallback(
   sensor_msgs::msg::LaserScan new_scan;
   new_scan = *scan_msg;
   new_scan.header.frame_id = "odom";
-  float angle = scan_msg->angle_min;
+  // float angle = scan_msg->angle_min;
   for (size_t i = 0; i < scan_msg->ranges.size(); i++) {
-    // Computer a new set of scans
-    new_scan.ranges[i] = 0.0;  // Wipe out old scan value for the angle.
-    for (size_t r = 0; r < kMAX_RANGE * kPIXELS_PER_METER; r++) {
-      // Look along a radius line from [0, 0] in th odom frame.
-      float radius =
-          (float)r /
-          kPIXELS_PER_METER;  // Radius corresponding to array coordinate.
-      int x = (radius * cos(angle) * kPIXELS_PER_METER) + (kMAP_PIXELS / 2);
-      int y = (radius * sin(angle) * kPIXELS_PER_METER) + (kMAP_PIXELS / 2);
-      if (neighborIsInRange(x, y)) {
-        new_scan.ranges[i] = radius;
-        break;  // Advance to the next scan radius.
-      }
-      // // int x = int(((radius * cos(angle)) * kPIXELS_PER_METER) + 0.5) +
-      // //         (kMAP_PIXELS / 2);
-      // // int y = int(((radius * sin(angle)) * kPIXELS_PER_METER) + 0.5) +
-      // //         (kMAP_PIXELS / 2);
-      // if ((x >= 0) && (x < kMAP_PIXELS) && (y >= 0) && (y < kMAP_PIXELS) &&
-      //     (points_[x][y] > 0)) {
-      //   // We have found a persistent point.
-      //   // Take the nearest radius that shows a point, as further points
-      //   // along the raidus line would be obscured by this point.
-      //   new_scan.ranges[i] = radius;
-      //   break;  // Advance to the next scan radius.
-      // }
-    }
+    new_scan.ranges[i] = 10'0000.0;  // Wipe out old scan value for the angle.
+  }
 
-    angle += scan_msg->angle_increment;
+  for (size_t x_coord = 0; x_coord < kMAP_PIXELS; x_coord++) {
+    for (size_t y_coord = 0; y_coord < kMAP_PIXELS; y_coord++) {
+      float offset = kMAP_PIXELS / 2.0;
+      float px = x_coord - offset; // Offset to represent real coordinates.
+      float py = y_coord - offset;
+      px = px / kPIXELS_PER_METER; // Scale.
+      py = py / kPIXELS_PER_METER;
+      float distance_to_point = sqrt((px * px) + (py * py));
+      float angle_to_point = atan2(py, px);
+      int angle_slot = (angle_to_point - scan_msg->angle_min) / scan_msg->angle_increment;
+      if (points_[x_coord][y_coord] > 0) {
+        // Found a persisteng point.
+        if (distance_to_point < new_scan.ranges[angle_slot]) {
+          new_scan.ranges[angle_slot] = distance_to_point;
+        }
+      }
+    }
   }
 
   lidar_pub_->publish(new_scan);
