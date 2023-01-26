@@ -32,7 +32,7 @@ def generate_launch_description():
 
   do_mapping_argument = DeclareLaunchArgument(
       'mapping',
-      default_value='true',
+      default_value='false',
       description='Enable mapping?')
 
   nav_pkg_path = get_package_share_directory('nav2_bringup')

@@ -72,7 +72,7 @@ configurable_parameters = [{'name': 'camera_name',                  'default': '
                            {'name': 'reconnect_timeout',            'default': '6.', 'description': 'Timeout(seconds) between consequtive reconnection attempts'},
                            {'name': 'tracking_module.frames_queue_size', 'default': '32', 'description': 'raven'},
                            {'name': 'base_frame_id', 'default': 'base_link', 'description': 'raven'},
-                           {'name': 'odom_frame_id', 'default': 'odomXXX', 'description': 'raven'},
+                           {'name': 'odom_frame_id', 'default': 'odom_frame', 'description': 'raven'},
                            {'name': 'pose_frame_id', 'default': 't265_camera_pose_frame', 'description': 'rave'}
                         #    {'name': 'pose_qos', 'default': 'PARAMETERS', 'description': 'QOS for /odom'}
                           ]

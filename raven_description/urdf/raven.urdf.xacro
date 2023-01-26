@@ -5,6 +5,14 @@
     <xacro:include filename="$(find raven_description)/urdf/wheel.urdf.xacro" />
     <!-- <xacro:include filename="$(find raven_description)/urdf/raven_gazebo.urdf.xacro" /> -->
 
+    <material name="black">
+        <color rgba="0 0 0 1"/>
+    </material>
+
+    <material name="blackish">
+        <color rgba="0.1 0.1 0.1 1"/>
+    </material>
+
     <xacro:property name="M_PI" value="3.14159" />
 
     <xacro:property name="body_height" value="0.262" />
@@ -54,6 +62,19 @@
     </link>
 
     <link name="base_footprint" />
+
+    <link name="odom" />
+    <link name="odom_frame" />
+    <joint name="odom_to_odom_frame_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0" />>
+        <parent link="odom" />
+        <child link="odom_frame" />
+    </joint>
+    <joint name="odom_frame_to_t265_pose_frame_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0" />>
+        <parent link="odom_frame" />
+        <child link="t265_pose_frame" />
+    </joint>
 
     <joint name="base_footprint_joint" type="fixed">
         <origin xyz="0 0 ${base_to_floor_z_offset}" rpy="0 0 0" />

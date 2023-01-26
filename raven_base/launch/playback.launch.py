@@ -41,6 +41,7 @@ def generate_launch_description():
             "ros2",
             "bag",
             "play",
+            "--clock", 
             "--loop",
             "/home/ros/bag/bag_0.db3"
         ],
