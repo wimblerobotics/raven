@@ -23,6 +23,7 @@ find_package(builtin_interfaces REQUIRED)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 find_package(geometry_msgs REQUIRED)
 find_package(matplotlib_cpp REQUIRED)
+find_package(OpenCV REQUIRED)
 find_package(PythonLibs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
@@ -45,6 +46,16 @@ ament_export_dependencies(rclcpp rosidl_default_runtime)
 
 include_directories(
   include
+)
+
+add_executable (
+  linecv
+  src/linecv.cpp
+)
+
+ament_target_dependencies(
+  linecv
+  OpenCV
 )
 
 add_executable(
