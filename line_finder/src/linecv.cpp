@@ -4,6 +4,10 @@
 #include <rclcpp/rclcpp.hpp>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgcodecs.hpp"
+#include "opencv2/imgproc.hpp"
+
 using std::placeholders::_1;
 
 namespace linecv {
@@ -18,6 +22,28 @@ LineCv::LineCv()
   qos.durability(RMW_QOS_POLICY_DURABILITY_SYSTEM_DEFAULT);
   qos.avoid_ros_namespace_conventions(false);
 
+  for (size_t i = 0; i < kMAP_PIXELS; i++) {
+    for (size_t j = 0; j < kMAP_PIXELS; j++) {
+      points_[i][j] = 0;
+      if (i == (kMAP_PIXELS / 2)) {
+        points_[i][j] = 255;
+      }
+    }
+  }
+
+  // cv::Mat mat = cv::Mat(3, 10, CV_8UC1);
+  cv::Mat mat = cv::Mat(kMAP_PIXELS, kMAP_PIXELS, CV_8UC1);
+
+  // The first element of temp decays to int* data.
+  // It means that mat.data tracks temp.
+  mat.data = points_[0];
+
+  std::cout << "rows: " << mat.rows << ", cols: " << mat.cols << std::endl;
+  // cv::namedWindow("scan", cv::WINDOW_NORMAL);
+  // cv::resizeWindow("scan", 640, 640);
+  // cv::imshow("scan", mat);
+  // cv::waitKey();
+
   scan_subscriber_ = create_subscription<sensor_msgs::msg::LaserScan>(
       "/scan", qos, std::bind(&LineCv::laserScanCallback, this, _1));
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(get_clock());
@@ -29,27 +55,45 @@ LineCv::~LineCv() {}
 void LineCv::laserScanCallback(
     const sensor_msgs::msg::LaserScan::ConstSharedPtr scan_msg) {
   RCLCPP_INFO(rclcpp::get_logger("linecv_node"), "scan");
+
   manage_scan(scan_msg);
 
+  cv::Mat mat = cv::Mat(kMAP_PIXELS, kMAP_PIXELS, CV_8UC1);
   for (size_t x_coord = 0; x_coord < kMAP_PIXELS; x_coord++) {
     for (size_t y_coord = 0; y_coord < kMAP_PIXELS; y_coord++) {
-      float offset = kMAP_PIXELS / 2.0;
-      float px = x_coord - offset;  // Offset to represent real coordinates.
-      float py = y_coord - offset;
-      px = px / kPIXELS_PER_METER;  // Scale.
-      py = py / kPIXELS_PER_METER;
-      float distance_to_point = sqrt((px * px) + (py * py));
-      float angle_to_point = atan2(py, px);
-      int angle_slot =
-          (angle_to_point - scan_msg->angle_min) / scan_msg->angle_increment;
-      if (points_[x_coord][y_coord] > 0) {
-        // Found a persistent point.
-        // if (distance_to_point < new_scan.ranges[angle_slot]) {
-        // new_scan.ranges[angle_slot] = distance_to_point;
-        // }
-      }
+      mat.at<unsigned char>(x_coord, y_coord) = points_[x_coord][y_coord] > 0 ? 0 : 255;
     }
   }
+  // mat.data = points_[0];
+  cv::namedWindow("scan", cv::WINDOW_NORMAL);
+  cv::resizeWindow("scan", 640, 640);
+  cv::imshow("scan", mat);
+  cv::waitKey(1);
+
+  // for (size_t x_coord = 0; x_coord < kMAP_PIXELS; x_coord++) {
+  //   for (size_t y_coord = 0; y_coord < kMAP_PIXELS; y_coord++) {
+  //   }
+  // }
+
+  // for (size_t x_coord = 0; x_coord < kMAP_PIXELS; x_coord++) {
+  //   for (size_t y_coord = 0; y_coord < kMAP_PIXELS; y_coord++) {
+  //     float offset = kMAP_PIXELS / 2.0;
+  //     float px = x_coord - offset;  // Offset to represent real coordinates.
+  //     float py = y_coord - offset;
+  //     px = px / kPIXELS_PER_METER;  // Scale.
+  //     py = py / kPIXELS_PER_METER;
+  //     float distance_to_point = sqrt((px * px) + (py * py));
+  //     float angle_to_point = atan2(py, px);
+  //     int angle_slot =
+  //         (angle_to_point - scan_msg->angle_min) / scan_msg->angle_increment;
+  //     if (points_[x_coord][y_coord] > 0) {
+  //       // Found a persistent point.
+  //       // if (distance_to_point < new_scan.ranges[angle_slot]) {
+  //       // new_scan.ranges[angle_slot] = distance_to_point;
+  //       // }
+  //     }
+  //   }
+  // }
 }
 
 void LineCv::manage_scan(
