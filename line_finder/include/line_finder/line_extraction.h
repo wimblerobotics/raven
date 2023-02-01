@@ -1,5 +1,4 @@
-#ifndef LINE_EXTRACTION_H
-#define LINE_EXTRACTION_H
+#pragma once
 
 #include <cmath>
 #include <vector>
@@ -19,11 +18,11 @@ public:
   LineExtraction();
   ~LineExtraction();
   // Run
-  void extractLines(std::vector<Line>&);
+  void extractLines(std::vector<Line>&, bool debug);
   // Data setting
   void setCachedData(const std::vector<double>&, const std::vector<double>&,
                      const std::vector<double>&, const std::vector<unsigned int>&);
-  void setRangeData(const std::vector<double>&);
+  void setRangeData(const std::vector<double>&, bool debug);
   // Parameter setting
   void setBearingVariance(double);
   void setRangeVariance(double);
@@ -50,8 +49,8 @@ private:
   double chiSquared(const Eigen::Vector2d&, const Eigen::Matrix2d&,
                     const Eigen::Matrix2d&);
   double distBetweenPoints(unsigned int index_1, unsigned int index_2);
-  void   filterCloseAndFarPoints();
-  void   filterOutlierPoints();
+  void   filterCloseAndFarPoints(bool debug);
+  void   filterOutlierPoints(bool debug);
   void   filterLines();
   void   mergeLines();
   void   split(const std::vector<unsigned int>&);
@@ -59,4 +58,3 @@ private:
 
 } // namespace line_finder
 
-#endif

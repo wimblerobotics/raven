@@ -7,12 +7,13 @@
 #include <vector>
 #include <visualization_msgs/msg/marker.hpp>
 
+#include "line.h"
+#include "line_extraction.h"
 #include "line_finder/msg/closest_point_to_line_segment.hpp"
 #include "line_finder/msg/closest_point_to_line_segment_list.hpp"
 #include "line_finder/msg/line_segment.hpp"
 #include "line_finder/msg/line_segment_list.hpp"
-#include "line.h"
-#include "line_extraction.h"
+#include "line_finder/srv/explain.hpp"
 #include "rcl_interfaces/msg/set_parameters_result.hpp"
 #include "rclcpp/rclcpp.hpp"
 
@@ -24,7 +25,7 @@ class LineExtractionROS : public rclcpp::Node {
   LineExtractionROS(int argc, char *argv[]);
   ~LineExtractionROS();
   // Running
-//   void run();
+  //   void run();
 
  private:
   // ROS
@@ -35,7 +36,7 @@ class LineExtractionROS : public rclcpp::Node {
       closest_point_to_line_publisher_;
   rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr
       marker_publisher_;
-
+  rclcpp::Service<line_finder::srv::Explain>::SharedPtr explain_service_;
   // Parameters
   double bearing_std_dev_;
   std::string frame_id_;
@@ -55,7 +56,12 @@ class LineExtractionROS : public rclcpp::Node {
   // Line extraction
   LineExtraction line_extraction_;
   bool data_cached_;  // true after first scan used to cache data
+  bool explain_once_;
+
   // Members
+  void explain(
+      const std::shared_ptr<line_finder::srv::Explain::Request> request,
+      std::shared_ptr<line_finder::srv::Explain::Response> response);
   void loadParameters(int argc, char *argv[]);
   void populateClosetPointToLineSegListMsg(
       const std::vector<Line> &,

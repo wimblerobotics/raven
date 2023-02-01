@@ -6,18 +6,19 @@
 #include <fstream>
 #include <iostream>
 
+#include "line_finder/srv/explain.hpp"
 #include "point_line_util.h"
 #include "rcl_interfaces/msg/set_parameters_result.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "yaml-cpp/yaml.h"
 
 using namespace YAML;
-using std::placeholders::_1;
+using std::placeholders::_1, std::placeholders::_2;
 
 namespace line_finder {
 
 LineExtractionROS::LineExtractionROS(int argc, char *argv[])
-    : Node("line_finder_node"), data_cached_(false) {
+    : Node("line_finder_node"), data_cached_(false), explain_once_(false) {
   loadParameters(argc, argv);
 
   auto qos = rclcpp::QoS(
@@ -41,32 +42,19 @@ LineExtractionROS::LineExtractionROS(int argc, char *argv[])
 
   parameter_callback_handle_ = add_on_set_parameters_callback(std::bind(
       &LineExtractionROS::parametersCallback, this, std::placeholders::_1));
+
+  explain_service_ = create_service<line_finder::srv::Explain>(
+      "explain_once", std::bind(&LineExtractionROS::explain, this, _1, _2));
 }
 
 LineExtractionROS::~LineExtractionROS() {}
 
-///////////////////////////////////////////////////////////////////////////////
-// Run
-///////////////////////////////////////////////////////////////////////////////
-// void LineExtractionROS::run() {
-//   // Extract the linesn
-//   // std::vector<Line> lines;
-//   // line_extraction_.extractLines(lines);
-
-//   // // Populate message
-//   // line_finder::msg::LineSegmentList msg;
-//   // populateLineSegListMsg(lines, msg);
-
-//   // // Publish the lines
-//   // line_publisher_->publish(msg);
-
-//   // // Also publish markers if parameter publish_markers is set to true
-//   // if (publish_markers_) {
-//   //   visualization_msgs::msg::Marker marker_msg;
-//   //   populateMarkerMsg(lines, marker_msg);
-//   //   marker_publisher_->publish(marker_msg);
-//   // }
-// }
+void LineExtractionROS::explain(
+    const std::shared_ptr<line_finder::srv::Explain::Request> /*request*/,
+    std::shared_ptr<line_finder::srv::Explain::Response> response) {
+  explain_once_ = true;
+  response->result = true;
+}
 
 rcl_interfaces::msg::SetParametersResult LineExtractionROS::parametersCallback(
     const std::vector<rclcpp::Parameter> &parameters) {
@@ -502,20 +490,31 @@ void LineExtractionROS::populateIntersectionMarkers(
 ///////////////////////////////////////////////////////////////////////////////
 void LineExtractionROS::cacheData(
     const sensor_msgs::msg::LaserScan::ConstSharedPtr scan_msg) {
+  std::stringstream explanation;
   std::vector<double> bearings, cos_bearings, sin_bearings;
   std::vector<unsigned int> indices;
   const std::size_t num_measurements = std::ceil(
       (scan_msg->angle_max - scan_msg->angle_min) / scan_msg->angle_increment);
+  if (explain_once_) {
+    explanation << "cacheData num_measurements: " << num_measurements << std::endl;
+  }
+
   for (std::size_t i = 0; i < num_measurements; ++i) {
     const double b = scan_msg->angle_min + i * scan_msg->angle_increment;
     bearings.push_back(b);
     cos_bearings.push_back(cos(b));
     sin_bearings.push_back(sin(b));
     indices.push_back(i);
+    if (explain_once_) {
+      explanation << "   [i] bearing: " << b << ", cos: " << cos(b) << ", sin: " << sin(b) << std::endl;
+    }
   }
 
   line_extraction_.setCachedData(bearings, cos_bearings, sin_bearings, indices);
   RCUTILS_LOG_DEBUG("Data has been cached.");
+  if (explain_once_) {
+    std::cout << explanation.str();
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -530,9 +529,9 @@ void LineExtractionROS::laserScanCallback(
 
   std::vector<double> scan_ranges_doubles(scan_msg->ranges.begin(),
                                           scan_msg->ranges.end());
-  line_extraction_.setRangeData(scan_ranges_doubles);
+  line_extraction_.setRangeData(scan_ranges_doubles, explain_once_);
   std::vector<Line> lines;
-  line_extraction_.extractLines(lines);
+  line_extraction_.extractLines(lines, explain_once_);
 
   // Populate ListSegmentList message
   line_finder::msg::LineSegmentList msg;
@@ -559,6 +558,8 @@ void LineExtractionROS::laserScanCallback(
     marker_msg2.header.stamp = scan_msg->header.stamp;
     marker_publisher_->publish(marker_msg2);
   }
+
+  explain_once_ = false;
 }
 
 }  // namespace line_finder

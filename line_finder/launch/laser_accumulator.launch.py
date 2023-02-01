@@ -29,6 +29,8 @@ def generate_launch_description():
             PythonLaunchDescriptionSource([
                 raven_description_directory_path, '/launch/raven_description.launch.py'
             ]))
+    
+        ld.add_action(raven_description_launch)
 
     # debug
     # if (do_debug):

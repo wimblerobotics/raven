@@ -16,14 +16,14 @@ LineExtraction::~LineExtraction() {}
 ///////////////////////////////////////////////////////////////////////////////
 // Main run function
 ///////////////////////////////////////////////////////////////////////////////
-void LineExtraction::extractLines(std::vector<Line>& lines) {
+void LineExtraction::extractLines(std::vector<Line>& lines, bool debug) {
   // Resets
   filtered_indices_ = c_data_.indices;
   lines_.clear();
 
   // Filter indices
-  filterCloseAndFarPoints();
-  filterOutlierPoints();
+  filterCloseAndFarPoints(debug);
+  filterOutlierPoints(debug);
 
   // Return no lines if not enough points left
   if (filtered_indices_.size() <=
@@ -63,14 +63,30 @@ void LineExtraction::setCachedData(const std::vector<double>& bearings,
   c_data_.indices = indices;
 }
 
-void LineExtraction::setRangeData(const std::vector<double>& ranges) {
+void LineExtraction::setRangeData(const std::vector<double>& ranges,
+                                  bool debug) {
+  std::stringstream explanation;
   r_data_.ranges = ranges;
   r_data_.xs.clear();
   r_data_.ys.clear();
+  if (debug) {
+    explanation << "LineExtraction::setRangeData" << std::endl;
+  }
+
+  size_t i = 0;
   for (std::vector<unsigned int>::const_iterator cit = c_data_.indices.begin();
        cit != c_data_.indices.end(); ++cit) {
-    r_data_.xs.push_back(c_data_.cos_bearings[*cit] * ranges[*cit]);
-    r_data_.ys.push_back(c_data_.sin_bearings[*cit] * ranges[*cit]);
+    double x = c_data_.cos_bearings[*cit] * ranges[*cit];
+    double y = c_data_.sin_bearings[*cit] * ranges[*cit];
+    r_data_.xs.push_back(x);
+    r_data_.ys.push_back(y);
+    if (debug) {
+      explanation << "[" << i++ << "] xs: " << x << ", ys: " << y << std::endl;
+    }
+  }
+
+  if (debug) {
+    std::cout << explanation.str();
   }
 }
 
@@ -135,21 +151,32 @@ double LineExtraction::distBetweenPoints(unsigned int index_1,
 ///////////////////////////////////////////////////////////////////////////////
 // Filtering points
 ///////////////////////////////////////////////////////////////////////////////
-void LineExtraction::filterCloseAndFarPoints() {
+void LineExtraction::filterCloseAndFarPoints(bool debug) {
   std::vector<unsigned int> output;
+  size_t i = 0;
   for (std::vector<unsigned int>::const_iterator cit =
            filtered_indices_.begin();
        cit != filtered_indices_.end(); ++cit) {
     const double& range = r_data_.ranges[*cit];
     if (range >= params_.min_range && range <= params_.max_range) {
       output.push_back(*cit);
+    } else if (debug) {
+      std::cout << " LineExtraction::filterCloseAndFarPoints [" << i
+                << "] range: " << range << " not in range of: ["
+                << params_.min_range << " .. " << params_.max_range << "]"
+                << std::endl;
     }
+    i++;
   }
   filtered_indices_ = output;
 }
 
-void LineExtraction::filterOutlierPoints() {
+void LineExtraction::filterOutlierPoints(bool debug) {
   if (filtered_indices_.size() < 3) {
+    if (debug) {
+      std::cout << "[LineExtraction::filterOutlierPoints] size: "
+                << filtered_indices_.size() << " is < 3, ignoring" << std::endl;
+    }
     return;
   }
 
@@ -185,6 +212,20 @@ void LineExtraction::filterOutlierPoints() {
       Line line(c_data_, r_data_, params_, line_indices);
       line.endpointFit();
       if (line.distToPoint(p_i) > params_.min_split_dist) {
+        if (debug) {
+          std::cout << "[LineExtraction::filterOutlierPoints] [" << i
+                    << "] point is an outlier"
+                    << ", p_i: " << p_i
+                    << ", p_i range: " << r_data_.ranges[p_i]
+                    << ", p_j: " << p_j
+                    << ", p_j range: " << r_data_.ranges[p_j]
+                    << ", p_k: " << p_k
+                    << ", p_k range: " << r_data_.ranges[p_k]
+                    << ", outlier_dist: " << params_.outlier_dist
+                    << ", j-k line distToPoint i: " << line.distToPoint(p_i)
+                    << " i > min_split_dist: params_.min_split_dist"
+                    << std::endl;
+        }
         continue;  // point is an outlier
       }
     }
