@@ -7,6 +7,7 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
+#include "vector"
 
 using std::placeholders::_1;
 
@@ -59,15 +60,45 @@ void LineCv::laserScanCallback(
   manage_scan(scan_msg);
 
   cv::Mat mat = cv::Mat(kMAP_PIXELS, kMAP_PIXELS, CV_8UC1);
+  cv::Mat lineMat = cv::Mat(kMAP_PIXELS, kMAP_PIXELS, CV_8UC1);
+  lineMat = cv::Scalar(0,0,0);
+
   for (size_t x_coord = 0; x_coord < kMAP_PIXELS; x_coord++) {
     for (size_t y_coord = 0; y_coord < kMAP_PIXELS; y_coord++) {
-      mat.at<unsigned char>(x_coord, y_coord) = points_[x_coord][y_coord] > 0 ? 0 : 255;
+      mat.at<unsigned char>(x_coord, y_coord) =
+          points_[x_coord][y_coord] > 0 ? 255 : 0;
     }
   }
-  // mat.data = points_[0];
+
+  // cv::Mat dst = cv::Mat(kMAP_PIXELS, kMAP_PIXELS, CV_8UC1);
+
+  // Probabilistic Line Transform
+  std::vector<cv::Vec4i> linesP;  // will hold the results of the detection
+  HoughLinesP(
+      mat, linesP, 0.5 /*rho*/, CV_PI / 180 /*theta*/, 5 /*threshold*/,
+      0.2 * kPIXELS_PER_METER /*minLineLength*/,
+      0.5 * kPIXELS_PER_METER /*maxLineGap*/);  // runs the actual detection
+  // Draw the lines
+  size_t max_lines = linesP.size() > 10 ? 10 : linesP.size();
+  for (size_t i = 0; i < max_lines; i++) {
+    cv::Vec4i l = linesP[i];
+    float len = sqrt(((l[2] - l[0]) * (l[2] - l[0])) +
+                     ((l[3] - l[1]) * (l[3] - l[1]))) /
+                kPIXELS_PER_METER;
+    std::cout << "[" << i << "/" << linesP.size() << "] (" << l[0] << ","
+              << l[1] << ")->(" << l[2] << "," << l[3] << "), len: " << len
+              << std::endl;
+    line(lineMat, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]),
+         cv::Scalar(32, 64, 128), 2 /*thickness*/, cv::LINE_AA);
+  }
+
   cv::namedWindow("scan", cv::WINDOW_NORMAL);
   cv::resizeWindow("scan", 640, 640);
   cv::imshow("scan", mat);
+
+  cv::namedWindow("lines", cv::WINDOW_NORMAL);
+  cv::resizeWindow("lines", 640, 640);
+  cv::imshow("lines", lineMat);
   cv::waitKey(1);
 
   // for (size_t x_coord = 0; x_coord < kMAP_PIXELS; x_coord++) {
