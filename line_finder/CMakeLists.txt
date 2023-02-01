@@ -34,11 +34,15 @@ find_package(tf2_ros REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
+message(STATUS "Found OpenCV version ${OpenCV_VERSION}")
+
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/ClosestPointToLineSegment.msg"
   "msg/ClosestPointToLineSegmentList.msg"
   "msg/LineSegment.msg"
   "msg/LineSegmentList.msg"
+  "srv/Explain.srv"
+
   DEPENDENCIES builtin_interfaces std_msgs
 )
 
@@ -48,14 +52,32 @@ include_directories(
   include
 )
 
-add_executable (
+add_executable(
   linecv
+  src/linecv_node.cpp
   src/linecv.cpp
 )
 
 ament_target_dependencies(
   linecv
+  geometry_msgs
   OpenCV
+  rclcpp
+  sensor_msgs
+  tf2_geometry_msgs
+  tf2_ros
+  visualization_msgs
+  yaml-cpp
+  ${catkin_LIBRARIES}
+)
+
+target_include_directories(
+  linecv
+  PUBLIC
+  ${OpenCV_INCLUDE_DIRS}
+  ${rclcpp_INCLUDE_DIRS}
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
 )
 
 add_executable(
@@ -116,14 +138,23 @@ target_include_directories(
   $<INSTALL_INTERFACE:include>
 )
 
-rosidl_target_interfaces(
-  lf
-  ${PROJECT_NAME}
+rosidl_get_typesupport_target(
+  cpp_typesupport_target
+  "${PROJECT_NAME}"
   "rosidl_typesupport_cpp"
 )
 
-target_link_libraries(lf ${YAML_CPP_LIBRARIES})
+target_link_libraries(
+    lf
+    "${cpp_typesupport_target}"
+    ${YAML_CPP_LIBRARIES}
+  )
 
+install(
+  TARGETS linecv
+  DESTINATION lib/${PROJECT_NAME}
+)
+  
 install(
   TARGETS lf
   DESTINATION lib/${PROJECT_NAME}
