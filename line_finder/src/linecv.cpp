@@ -1,5 +1,6 @@
 #include "line_finder/linecv.hpp"
 
+#include <algorithm>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
@@ -7,7 +8,6 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
-#include "vector"
 
 using std::placeholders::_1;
 
@@ -53,6 +53,51 @@ LineCv::LineCv()
 
 LineCv::~LineCv() {}
 
+// Compute the dot product AB . BC
+float DotProduct(float pointA[], float pointB[], float pointC[]) {
+  float AB[2];
+  float BC[2];
+  AB[0] = pointB[0] - pointA[0];
+  AB[1] = pointB[1] - pointA[1];
+  BC[0] = pointC[0] - pointB[0];
+  BC[1] = pointC[1] - pointB[1];
+  float dot = AB[0] * BC[0] + AB[1] * BC[1];
+
+  return dot;
+}
+
+// Compute the cross product AB x AC
+float CrossProduct(float pointA[], float pointB[], float pointC[]) {
+  float AB[2];
+  float AC[2];
+  AB[0] = pointB[0] - pointA[0];
+  AB[1] = pointB[1] - pointA[1];
+  AC[0] = pointC[0] - pointA[0];
+  AC[1] = pointC[1] - pointA[1];
+  float cross = AB[0] * AC[1] - AB[1] * AC[0];
+
+  return cross;
+}
+
+// Compute the distance from A to B
+float Distance(float pointA[], float pointB[]) {
+  float d1 = pointA[0] - pointB[0];
+  float d2 = pointA[1] - pointB[1];
+
+  return sqrt(d1 * d1 + d2 * d2);
+}
+
+// Compute the distance from AB to C
+float LineToPointDistance2D(float pointA[], float pointB[], float pointC[]) {
+  float dist = CrossProduct(pointA, pointB, pointC) / Distance(pointA, pointB);
+  float dot1 = DotProduct(pointA, pointB, pointC);
+  if (dot1 > 0) return Distance(pointB, pointC);
+
+  float dot2 = DotProduct(pointB, pointA, pointC);
+  if (dot2 > 0) return Distance(pointA, pointC);
+  return abs(dist);
+}
+
 void LineCv::laserScanCallback(
     const sensor_msgs::msg::LaserScan::ConstSharedPtr scan_msg) {
   RCLCPP_INFO(rclcpp::get_logger("linecv_node"), "scan");
@@ -61,7 +106,7 @@ void LineCv::laserScanCallback(
 
   cv::Mat mat = cv::Mat(kMAP_PIXELS, kMAP_PIXELS, CV_8UC1);
   cv::Mat lineMat = cv::Mat(kMAP_PIXELS, kMAP_PIXELS, CV_8UC1);
-  lineMat = cv::Scalar(0,0,0);
+  lineMat = cv::Scalar(0, 0, 0);
 
   for (size_t x_coord = 0; x_coord < kMAP_PIXELS; x_coord++) {
     for (size_t y_coord = 0; y_coord < kMAP_PIXELS; y_coord++) {
@@ -79,17 +124,39 @@ void LineCv::laserScanCallback(
       0.2 * kPIXELS_PER_METER /*minLineLength*/,
       0.5 * kPIXELS_PER_METER /*maxLineGap*/);  // runs the actual detection
   // Draw the lines
-  size_t max_lines = linesP.size() > 10 ? 10 : linesP.size();
+  size_t max_lines = linesP.size() > 100 ? 100 : linesP.size();
+  // std::sort(linesP.begin(), linesP.end(),
+  //      [](const std::vector<cv::Point>& c1, const std::vector<cv::Point>& c2)
+  //      {
+  //   return c1.x < c2.x;
+  //      });
+  struct sort_by_x_coord {
+    bool operator()(cv::Vec4i const& a, cv::Vec4i const& b) const {
+      if (a[0] < b[0]) return true;
+      return false;
+    }
+  };
+  // std::sort(linesP.begin(), linesP.end(), sort_by_y_coord());
   for (size_t i = 0; i < max_lines; i++) {
     cv::Vec4i l = linesP[i];
-    float len = sqrt(((l[2] - l[0]) * (l[2] - l[0])) +
-                     ((l[3] - l[1]) * (l[3] - l[1]))) /
+    float len = sqrt(((l[2] - l[0]) * (l[2] - l[0]) * 1.0) +
+                     ((l[3] - l[1]) * (l[3] - l[1]) * 1.0)) /
                 kPIXELS_PER_METER;
+    float v[] = {l[0] * 1.0f, l[1] * 1.0f};
+    float w[] = {l[2] * 1.0f, l[3] * 1.0f};
+    float origin[] = {kPIXELS_PER_METER * kMAX_RANGE * 1.0f, kPIXELS_PER_METER * kMAX_RANGE * 1.0f};
+    float dist_from_origin =  LineToPointDistance2D(v, w, origin) / kPIXELS_PER_METER;
     std::cout << "[" << i << "/" << linesP.size() << "] (" << l[0] << ","
               << l[1] << ")->(" << l[2] << "," << l[3] << "), len: " << len
-              << std::endl;
+              << "(" << l[0] * 1.0f / kPIXELS_PER_METER << ","
+              << l[1] * 1.0f / kPIXELS_PER_METER << ")->(" << l[2] * 1.0f / kPIXELS_PER_METER
+              << ", " << l[3] * 1.0f / kPIXELS_PER_METER << ")"
+              << ", distToLine: " << dist_from_origin
+               << std::endl;
     line(lineMat, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]),
-         cv::Scalar(32, 64, 128), 2 /*thickness*/, cv::LINE_AA);
+         cv::Scalar(255, 255, 255), 2 /*thickness*/, cv::LINE_AA);
+    cv::putText(lineMat, std::to_string(i), cv::Point(l[0], l[1]),
+                cv::FONT_HERSHEY_PLAIN, 1.0, cv::Scalar(255, 255, 255), 2);
   }
 
   cv::namedWindow("scan", cv::WINDOW_NORMAL);
@@ -99,7 +166,7 @@ void LineCv::laserScanCallback(
   cv::namedWindow("lines", cv::WINDOW_NORMAL);
   cv::resizeWindow("lines", 640, 640);
   cv::imshow("lines", lineMat);
-  cv::waitKey(1);
+  cv::waitKey(/*1*/);
 
   // for (size_t x_coord = 0; x_coord < kMAP_PIXELS; x_coord++) {
   //   for (size_t y_coord = 0; y_coord < kMAP_PIXELS; y_coord++) {
@@ -183,7 +250,7 @@ void LineCv::manage_scan(
         angle += scan_msg->angle_increment;
       }
     }
-  } catch (tf2::TransformException &ex) {
+  } catch (tf2::TransformException& ex) {
     std::cout << "Exception: " << ex.what() << std::endl;
   }
 }

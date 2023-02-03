@@ -9,12 +9,13 @@
 namespace linecv {
 class LineCv : public rclcpp::Node {
  public:
+  static const uint8_t kPIXELS_PER_METER = 40;
+
   LineCv();
   ~LineCv();
 
  private:
   static const uint32_t kMAX_RANGE = 10;
-  static const uint8_t kPIXELS_PER_METER = 40;
   static const uint32_t kMAP_PIXELS =
       (uint32_t)(kPIXELS_PER_METER * kMAX_RANGE * 2);
   static uint8_t points_[kMAP_PIXELS][kMAP_PIXELS];
