@@ -27,64 +27,46 @@ SOFTWARE.
     <xacro:property name="sonar_width" value="0.050" />
     <xacro:property name="sonar_z_offset" value="0.173" />
 
-    <link name="sonar_0">
-        <visual>
-            <geometry>
-                <box size="${sonar_depth} ${sonar_width} ${sonar_height}" />
-            </geometry>
-            <material name="black" />
-            <origin xyz="0 0 0" rpy="0 0 0" />
-        </visual>
-    </link>
-    <joint name="baselink_to_sonar_0" type="fixed">
-        <child link="sonar_0" />
-        <parent link="base_link" />
+
+    <xacro:macro name="sonar_unit" params="number *joint_pose">
+        <link name="sonar_${number}">
+            <visual>
+                <geometry>
+                    <box size="${sonar_depth} ${sonar_width} ${sonar_height}" />
+                </geometry>
+                <material name="black" />
+                <origin xyz="0 0 0" rpy="0 0 0" />
+            </visual>
+        </link>
+        <joint name="baselink_to_sonar_${number}" type="fixed">
+            <child link="sonar_${number}" />
+            <parent link="base_link" />
+            <xacro:insert_block name="joint_pose" />
+        </joint>
+        <gazebo reference="sonar_${number}">
+            <material>
+                Gazebo/Black
+            </material>
+        </gazebo>
+    </xacro:macro>
+
+    <xacro:sonar_unit number="0">
         <origin xyz="${front_edge+(sonar_depth/2)} 0 ${(sonar_height/2)+sonar_z_offset}" rpy="0 0 0" />
-    </joint>
+    </xacro:sonar_unit>
 
-    <link name="sonar_1">
-        <visual>
-            <geometry>
-                <box size="${sonar_depth} ${sonar_width} ${sonar_height}" />
-            </geometry>
-            <material name="black" />
-            <origin xyz="0 0 0" rpy="0 0 0" />
-        </visual>
-    </link>
-    <joint name="baselink_to_sonar_1" type="fixed">
-        <child link="sonar_1" />
-        <parent link="base_link" />
-        <origin xyz="0 ${case_left_edge+(sonar_depth/2)} ${(sonar_height/2)+sonar_z_offset}" rpy="0 0 ${M_PI / 2}" />
-    </joint>
+    <xacro:sonar_unit number="1">
+        <origin xyz="0 ${case_left_edge+(sonar_depth/2)} ${(sonar_height/2)+sonar_z_offset}"
+            rpy="0 0 ${M_PI / 2}" />
+    </xacro:sonar_unit>
 
-    <link name="sonar_2">
-        <visual>
-            <geometry>
-                <box size="${sonar_depth} ${sonar_width} ${sonar_height}" />
-            </geometry>
-            <material name="black" />
-            <origin xyz="0 0 0" rpy="0 0 0" />
-        </visual>
-    </link>
-    <joint name="baselink_to_sonar_2" type="fixed">
-        <child link="sonar_2" />
-        <parent link="base_link" />
-        <origin xyz="0 ${case_right_edge-(sonar_depth/2)} ${(sonar_height/2)+sonar_z_offset}" rpy="0 0 -${M_PI / 2}" />
-    </joint>
+    <xacro:sonar_unit number="2">
+        <origin xyz="0 ${case_right_edge-(sonar_depth/2)} ${(sonar_height/2)+sonar_z_offset}"
+            rpy="0 0 -${M_PI / 2}" />
+    </xacro:sonar_unit>
 
-    <link name="sonar_3">
-        <visual>
-            <geometry>
-                <box size="${sonar_depth} ${sonar_width} ${sonar_height}" />
-            </geometry>
-            <material name="black" />
-            <origin xyz="0 0 0" rpy="0 0 0" />
-        </visual>
-    </link>
-    <joint name="baselink_to_sonar_3" type="fixed">
-        <child link="sonar_3" />
-        <parent link="base_link" />
-        <origin xyz="${back_edge-(sonar_depth/2)} 0 ${(sonar_height/2)+sonar_z_offset}" rpy="0 0 ${M_PI}" />
-    </joint>
+    <xacro:sonar_unit number="3">
+        <origin xyz="${back_edge-(sonar_depth/2)} 0 ${(sonar_height/2)+sonar_z_offset}"
+            rpy="0 0 ${M_PI}" />
+    </xacro:sonar_unit>
 
 </robot>

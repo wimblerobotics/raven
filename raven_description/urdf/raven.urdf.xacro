@@ -18,42 +18,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="ravel">
+    <xacro:include filename="$(find raven_description)/urdf/raven_properties.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/caster.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/ld06.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/material.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/raven_gazebo.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/wheel.urdf.xacro" />
 
-    <material name="black">
-        <color rgba="0 0 0 1"/>
-    </material>
-
-    <material name="blackish">
-        <color rgba="0.1 0.1 0.1 1"/>
-    </material>
-
-    <xacro:property name="M_PI" value="3.14159" />
-
-    <xacro:property name="body_height" value="0.262" />
-    <xacro:property name="body_length" value="0.4572" />
-    <xacro:property name="body_width" value="0.3048" />
-
-    <xacro:property name="caster_radius" value="0.0381" />
-    <xacro:property name="caster_width" value="0.023" />
-    <xacro:property name="fwheel_offset" value="0.170" />
-    <xacro:property name="gear_box_center_height" value="0.015" />
-    <xacro:property name="t265_height" value="0.016" />
-    <xacro:property name="t265_length" value="0.100" />
-    <xacro:property name="t265_width" value="0.008" />
-    <xacro:property name="t265_x_offset" value="0.2126" />
-    <xacro:property name="wheel_radius" value="0.10" />
-    <xacro:property name="wheel_center_offset" value="0.030" />
-    <xacro:property name="wheel_width" value="0.0254" />
-
-    <xacro:property name="base_to_floor_z_offset" value="${wheel_radius+gear_box_center_height}" />
-    <xacro:property name="t265_z_offset" value="${base_to_floor_z_offset+0.293}" />
-
-    <xacro:property name="wheel_offset_from_front" value="${body_length/2}" />
 
     <link name="base_link">
         <collision>
@@ -67,23 +38,39 @@ SOFTWARE.
                 <box size="${body_length} ${body_width} ${body_height}" />
             </geometry>
             <material name="aluminum_frame" />
-            <origin rpy="0 0 0" xyz="${(-body_length/2)+wheel_offset_from_front} 0 ${(body_height/2)}" />
+            <origin rpy="0 0 0"
+                xyz="${(-body_length/2)+wheel_offset_from_front} 0 ${(body_height/2)}" />
         </visual>
+        <inertial>
+            <origin xyz="0 0 0.05" rpy="0 0 0" />
+            <mass value="12" />
+            <inertia
+                ixx="${(1/12) * mass * ((body_width  * body_width)  + (body_height * body_height))}"
+                ixy="0.0" ixz="0.0"
+                iyy="${(1/12) * mass * ((body_length * body_length) + (body_height * body_height))}"
+                iyz="0.0"
+                izz="${(1/12) * mass * ((body_length * body_length) + (body_width  * body_width))}" />
+        </inertial>
     </link>
+    <gazebo
+        reference="base_link">
+        <material>
+            aluminum_frame
+        </material>
+    </gazebo>
 
     <link name="base_footprint" />
 
     <link name="odom" />
     <link name="odom_frame" />
     <joint name="odom_to_odom_frame_joint" type="fixed">
-        <origin xyz="0 0 0" rpy="0 0 0" />>
-        <parent link="odom" />
+        <origin xyz="0 0 0" rpy="0 0 0" />> <parent link="odom" />
         <child link="odom_frame" />
     </joint>
     <joint name="odom_frame_to_t265_pose_frame_joint" type="fixed">
-        <origin xyz="0 0 0" rpy="0 0 0" />>
-        <parent link="odom_frame" />
-        <child link="t265_pose_frame" />
+        <origin xyz="0 0 0" rpy="0 0 0" />> <parent link="odom_frame" />
+        <child
+            link="t265_pose_frame" />
     </joint>
 
     <joint name="base_footprint_joint" type="fixed">
@@ -97,22 +84,27 @@ SOFTWARE.
     </xacro:wheel>
 
     <xacro:wheel wheel_prefix="front_right">
-        <origin xyz="0 -${(body_width/2)+wheel_center_offset} -${gear_box_center_height}" rpy="0 0 0" />
+        <origin xyz="0 -${(body_width/2)+wheel_center_offset} -${gear_box_center_height}"
+            rpy="0 0 0" />
     </xacro:wheel>
 
     <xacro:caster wheel_prefix="fcaster">
-        <origin xyz="${fwheel_offset} 0.0 -${wheel_radius + gear_box_center_height - caster_radius}" rpy="0 0 0" />
+        <origin xyz="${fwheel_offset} 0.0 -${wheel_radius + gear_box_center_height - caster_radius}"
+            rpy="0 0 0" />
     </xacro:caster>
     <xacro:caster wheel_prefix="rcaster">
-        <origin xyz="${-fwheel_offset} 0.0 -${wheel_radius + gear_box_center_height - caster_radius}" rpy="0 0 0" />
+        <origin
+            xyz="${-fwheel_offset} 0.0 -${wheel_radius + gear_box_center_height - caster_radius}"
+            rpy="0 0 0" />
     </xacro:caster>
 
     <xacro:ld06 lidar_prefix="right_rear">
-        <origin xyz="${-(body_length / 2) - 0.030}  -${((body_width / 2) - 0)} 0.200" rpy="0 0 ${M_PI}"/>
+        <origin xyz="${-(body_length / 2) - 0.030}  -${((body_width / 2) - 0)} 0.200"
+            rpy="0 0 ${M_PI}" />
     </xacro:ld06>
-    
+
     <xacro:ld06 lidar_prefix="left_front">
-        <origin xyz="${(body_length / 2) + 0.030}  ${((body_width / 2) - 0.0)} 0.040" rpy="0 0 0"/>
+        <origin xyz="${(body_length / 2) + 0.030}  ${((body_width / 2) - 0.0)} 0.040" rpy="0 0 0" />
     </xacro:ld06>
 
     <!-- T265 y tilt is 31 degrees or 0.541 radians -->
@@ -132,12 +124,17 @@ SOFTWARE.
             <material name="t265_material" />
         </visual>
     </link>
+    <gazebo reference="t265_pose_frame">
+        <material>
+            Gazebo/DarkGrey
+        </material>
+    </gazebo>
 
     <joint name="t265_to_base_footprint" type="fixed">
         <parent link="t265_rotate_frame" />
         <child link="base_footprint" />
         <origin xyz="-${t265_x_offset} 0 -${t265_z_offset}" rpy="0 0 0" />
-         <!--
+        <!--
         <child link="base_footprint" />
         <origin xyz="-${t265_x_offset} 0 -${t265_z_offset}" rpy="0 0.541 0 " />
         -->

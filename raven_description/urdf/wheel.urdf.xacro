@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-Copyright (c) 2018 Michael Wimble
+Copyright (c) 2023 Michael Wimble
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,30 +27,30 @@ SOFTWARE.
 			<collision>
 				<origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
 				<geometry>
-			        <cylinder length="${wheel_width}" radius="${wheel_radius}" />
+					<cylinder length="${wheel_width}" radius="${wheel_radius}" />
 				</geometry>
 			</collision>
 			<inertial>
 				<mass value="2.637" />
 				<origin xyz="0 0 0" />
-				<inertia  ixx="0.02467" ixy="0" ixz="0" iyy="0.04411" iyz="0" izz="0.02467" />
+				<inertia ixx="0.02467" ixy="0" ixz="0" iyy="0.04411" iyz="0" izz="0.02467" />
 			</inertial>
 			<visual>
 				<origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
 				<geometry>
-			        <cylinder length="${wheel_width}" radius="${wheel_radius}" />
+					<cylinder length="${wheel_width}" radius="${wheel_radius}" />
 				</geometry>
 				<material name="wheel_material" />
 			</visual>
 		</link>
 
 		<joint name="${wheel_prefix}_wheel" type="continuous">
-			<parent link="base_link"/>
-			<child link="${wheel_prefix}_wheel_link"/>
-			<xacro:insert_block name="joint_pose"/>
+			<parent link="base_link" />
+			<child link="${wheel_prefix}_wheel_link" />
+			<xacro:insert_block name="joint_pose" />
 			<axis xyz="0 1 0" rpy="0 0 0" />
-		    <limit effort="100" velocity="100"/>
-		    <joint_properties damping="0.1" friction="0.5"/>
+			<limit effort="100" velocity="3" />
+			<dynamics damping="0.1" friction="0.5" />
 		</joint>
 
 		<transmission name="${wheel_prefix}_wheel_trans" type="SimpleTransmission">
@@ -63,6 +63,19 @@ SOFTWARE.
 			</joint>
 		</transmission>
 
+		<gazebo reference="${wheel_prefix}_wheel_link">
+			<mu1 value="10000.0" />
+			<mu2 value="10000.0" />
+			<kp value="1e13" />
+			<kd value="1" />
+			<!-- <mu1>200.0</mu1>
+			<mu2>100.0</mu2>
+			<kp>1000000.0</kp>
+			<kd>1.0</kd>
+			<max_vel>0.01</max_vel>
+			<min_depth>0.001</min_depth> -->
+			<material>Gazebo/Black</material>
+		</gazebo>
 	</xacro:macro>
 
 </robot>

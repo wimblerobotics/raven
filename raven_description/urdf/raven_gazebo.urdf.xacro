@@ -139,271 +139,15 @@
     <child link="odom" />
   </joint> -->
 
-  <gazebo reference="base_link">
-    <material>
-      aluminum_frame
-    </material>
-    <inertial>
-      <origin xyz="0 0 0.05" rpy="0 0 0" />
-      <mass value="12" />
-      <inertia ixx="2.26" ixy="0.0" ixz="0.0" iyy="6.26" iyz="0.0" izz="8.5" />
-    </inertial>
-  </gazebo>
-
-  <gazebo reference="ld06_base_cylinder_left_front">
-    <material>
-      Gazebo/Grey
-    </material>
-  </gazebo>
-
-  <gazebo reference="ld06_base_cylinder_right_rear">
-    <material>
-      Gazebo/Grey
-    </material>
-  </gazebo>
-
-  <gazebo reference="ld06_box_left_front">
-    <material>
-      Gazebo/Black
-    </material>
-  </gazebo>
-
-  <gazebo reference="ld06_box_right_rear">
-    <material>
-      Gazebo/Black
-    </material>
-  </gazebo>
-
-  <gazebo reference="ld06_cylinder_left_front">
-    <material>
-      Gazebo/BlueGlow 
-    </material>
-  </gazebo>
-
-  <gazebo reference="ld06_cylinder_right_rear">
-    <material>
-      Gazebo/BlueGlow 
-    </material>
-  </gazebo>
-
-  <gazebo reference="ld06_frame_left_front">
-    <material>
-      Gazebo/Grey
-    </material>
-  </gazebo>
-
-  <gazebo reference="ld06_frame_right_rear">
-    <material>
-      Gazebo/Grey
-    </material>
-  </gazebo>
-
-
-  <gazebo reference="sonar_0">
-    <material>
-      Gazebo/Black
-    </material>
-  </gazebo>
-
-  <gazebo reference="sonar_1">
-    <material>
-      Gazebo/Black
-    </material>
-  </gazebo>
-
-  <gazebo reference="sonar_2">
-    <material>
-      Gazebo/Black
-    </material>
-  </gazebo>
-
-  <gazebo reference="sonar_3">
-    <material>
-      Gazebo/Black
-    </material>
-  </gazebo>
-
-  <gazebo reference="tof_0">
-    <material>
-      Gazebo/Grey
-    </material>
-  </gazebo>
-
-  <gazebo reference="tof_1">
-    <material>
-      Gazebo/Grey
-    </material>
-  </gazebo>
-
-  <gazebo reference="tof_2">
-    <material>
-      Gazebo/Grey
-    </material>
-  </gazebo>
-
-  <gazebo reference="tof_3">
-    <material>
-      Gazebo/Grey
-    </material>
-  </gazebo>
-
-  <gazebo reference="tof_4">
-    <material>
-      Gazebo/Grey
-    </material>
-  </gazebo>
-
-  <gazebo reference="tof_5">
-    <material>
-      Gazebo/Grey
-    </material>
-  </gazebo>
-
-  <gazebo reference="tof_6">
-    <material>
-      Gazebo/Grey
-    </material>
-  </gazebo>
-
-  <gazebo reference="tof_7">
-    <material>
-      Gazebo/Grey
-    </material>
-  </gazebo>
-
-  <gazebo reference="t265_pose_frame">
-    <material>
-      Gazebo/DarkGrey
-    </material>
-  </gazebo>
-
-  <gazebo reference="lidar_frame_right_rear">
-    <sensor name="sensor_ray_right" type="ray">
-      <ray>
-        <scan>
-          <horizontal>
-            <samples>450</samples>
-            <resolution>0.8</resolution>
-            <min_angle>0</min_angle>
-            <max_angle>6.28</max_angle>
-          </horizontal>
-        </scan>
-        <range>
-          <min>0.05</min>
-          <max>10.0</max>
-        </range>
-        <noise>
-          <type>gaussian</type>
-          <mean>0.0</mean>
-          <stddev>0.02</stddev>
-        </noise>
-      </ray>
-      <always_on>true</always_on>
-      <update_rate>3.0</update_rate>
-
-      <plugin name="laserscan_right" filename="libgazebo_ros_ray_sensor.so">
-        <ros>
-          <remapping>~/out:=/scan_right</remapping>
-        </ros>
-        <output_type>sensor_msgs/LaserScan</output_type>
-        <frame_name>scan</frame_name>
-
-      </plugin>
-      <visualize>1</visualize>
-    </sensor>
-    <material>
-      Gazebo/Black
-    </material>
-  </gazebo>
-
-  <gazebo reference="lidar_frame_left_front">
-    <sensor name="sensor_ray_left" type="ray">
-      <ray>
-        <scan>
-          <horizontal>
-            <samples>450</samples>
-            <resolution>0.8</resolution>
-            <min_angle>0</min_angle>
-            <max_angle>6.28</max_angle>
-          </horizontal>
-        </scan>
-        <range>
-          <min>0.05</min>
-          <max>10.0</max>
-        </range>
-        <noise>
-          <type>gaussian</type>
-          <mean>0.0</mean>
-          <stddev>0.02</stddev>
-        </noise>
-      </ray>
-      <always_on>true</always_on>
-      <update_rate>3.0</update_rate>
-
-      <plugin name="laserscan_left" filename="libgazebo_ros_ray_sensor.so">
-        <ros>
-          <remapping>~/out:=/scan_right</remapping>
-        </ros>
-        <output_type>sensor_msgs/LaserScan</output_type>
-        <frame_name>scan</frame_name>
-
-      </plugin>
-      <visualize>1</visualize>
-    </sensor>
-    <material>
-      Gazebo/Black
-    </material>
-  </gazebo>
-
-  <gazebo reference="front_left_wheel_link">
-    <mu1>200.0</mu1>
-    <mu2>100.0</mu2>
-    <kp>1000000.0</kp>
-    <kd>1.0</kd>
-    <max_vel>0.01</max_vel>
-    <min_depth>0.001</min_depth>
-    <material>Gazebo/Black</material>
-  </gazebo>
-
-  <gazebo reference="front_right_wheel_link">
-    <mu1>200.0</mu1>
-    <mu2>100.0</mu2>
-    <kp>1000000.0</kp>
-    <kd>1.0</kd>
-    <max_vel>0.01</max_vel>
-    <min_depth>0.001</min_depth>
-    <material>Gazebo/Black</material>
-  </gazebo>
-
-  <gazebo reference="fcaster_wheel_link">
-    <mu1>0.00000</mu1>
-    <mu2>0.00000</mu2>
-    <!-- kp>100000.0</kp>
-    <kd>1.0</kd  -->
-    <max_vel>0.001</max_vel>
-    <min_depth>0.0001</min_depth>
-    <material>Gazebo/Red</material>
-  </gazebo>
-
-  <gazebo reference="rcaster_wheel_link">
-    <mu1>0.00000</mu1>
-    <mu2>0.00000</mu2>
-    <!-- kp>100000.0</kp>
-    <kd>1.0</kd  -->
-    <max_vel>0.001</max_vel>
-    <min_depth>0.0001</min_depth>
-    <material>Gazebo/Red</material>
-  </gazebo>
-
   <gazebo>
     <plugin name='diff_drive_simbot' filename='libgazebo_ros_diff_drive.so'>
 
-      <ros>
+      <!-- <ros>
         <namespace>/simbot</namespace>
         <remapping>cmd_vel:=/cmd_vel</remapping>
         <remapping>odom:=/odom</remapping>
 
-      </ros>
+      </ros> -->
 
       <!-- wheels -->
       <left_joint>front_left_wheel</left_joint>
@@ -413,7 +157,7 @@
       <wheel_separation>0.3108</wheel_separation>
       <wheel_diameter>0.2</wheel_diameter>
 
-      <update_rate>100.0</update_rate>
+      <update_rate>80.0</update_rate>
 
       <!-- limits -->
       <max_wheel_torque>8.0</max_wheel_torque>
@@ -425,7 +169,7 @@
       <publish_wheel_tf>true</publish_wheel_tf>
 
       <odometry_frame>odom_frame</odometry_frame>
-      <robot_base_frame>base_footprint</robot_base_frame>
+      <robot_base_frame>base_link</robot_base_frame>
 
     </plugin>
     <plugin name="gazebo_ros_joint_state_publisher"
@@ -437,7 +181,7 @@
         <remapping>joint_states:=/base_wheel_joints</remapping>
       </ros>
       <!-- Update rate in Hertz -->
-      <update_rate>500</update_rate>
+      <update_rate>80</update_rate>
       <!-- Name of joints in the model whose states will be published. -->
       <joint_name>front_left_wheel</joint_name>
       <joint_name>front_right_wheel</joint_name>

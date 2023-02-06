@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-Copyright (c) 2018 Michael Wimble
+Copyright (c) 2023 Michael Wimble
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -24,7 +24,7 @@ SOFTWARE.
 			<collision>
 				<origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
 				<geometry>
-			        <cylinder length="${caster_width}" radius="${caster_radius}" />
+					<cylinder length="${caster_width}" radius="${caster_radius}" />
 				</geometry>
 			</collision>
 			<inertial>
@@ -34,9 +34,9 @@ SOFTWARE.
 			</inertial>
 			<visual>
 				<geometry>
-			        <cylinder length="${caster_width}" radius="${caster_radius}" />
+					<cylinder length="${caster_width}" radius="${caster_radius}" />
 				</geometry>
-		        <material name="caster_wheel_material" />
+				<material name="caster_wheel_material" />
 				<origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
 			</visual>
 		</link>
@@ -46,5 +46,12 @@ SOFTWARE.
 			<child link="${wheel_prefix}_wheel_link" />
 			<xacro:insert_block name="joint_pose" />
 		</joint>
+
+		<gazebo reference="${wheel_prefix}_wheel_link">
+			<mu1>0.00000</mu1>
+			<mu2>0.00000</mu2>
+			<material>Gazebo/Red</material>
+		</gazebo>
+
 	</xacro:macro>
 </robot>

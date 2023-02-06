@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:property name="M_PI" value="3.14159" />
+
+  <xacro:property name="body_height" value="0.262" />
+  <xacro:property name="body_length" value="0.4572" />
+  <xacro:property name="body_width" value="0.3048" />
+  <xacro:property name="mass" value="22" />
+
+  <xacro:property name="caster_radius" value="0.0381" />
+  <xacro:property name="caster_width" value="0.023" />
+  <xacro:property name="fwheel_offset" value="0.170" />
+  <xacro:property name="gear_box_center_height" value="0.015" />
+  <xacro:property name="t265_height" value="0.016" />
+  <xacro:property name="t265_length" value="0.100" />
+  <xacro:property name="t265_width" value="0.008" />
+  <xacro:property name="t265_x_offset" value="0.2126" />
+  <xacro:property name="wheel_radius" value="0.10" />
+  <xacro:property name="wheel_center_offset" value="0.030" />
+  <xacro:property name="wheel_width" value="0.0254" />
+
+  <xacro:property name="base_to_floor_z_offset" value="${wheel_radius+gear_box_center_height}" />
+  <xacro:property name="t265_z_offset" value="${base_to_floor_z_offset+0.293}" />
+
+  <xacro:property name="wheel_offset_from_front" value="${body_length/2}" />
+
+  <material name="black">
+    <color rgba="0 0 0 1" />
+  </material>
+
+  <material name="blackish">
+    <color rgba="0.1 0.1 0.1 1" />
+  </material>
+
+</robot>

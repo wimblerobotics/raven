@@ -27,124 +27,74 @@ SOFTWARE.
     <xacro:property name="tof_width" value="0.023" />
     <xacro:property name="tof_z_offset" value="0.015" />
 
-    <link name="tof_0">
-        <visual>
-            <geometry>
-                <box size="${tof_depth} ${tof_width} ${tof_height}" />
-            </geometry>
-            <material name="black" />
-            <origin xyz="0 0 0" rpy="0 0 0" />
-        </visual>
-    </link>
-    <joint name="baselink_to_tof_0" type="fixed">
-        <child link="tof_0" />
-        <parent link="base_link" />
-        <origin xyz="${front_edge+(tof_depth/2)} ${case_left_edge-(tof_width/2) - 0.020} ${(tof_height/2)+tof_z_offset}" rpy="0 0 0" />
-    </joint>
+    <xacro:macro name="tof_unit" params="number *joint_pose">
+        <link name="tof_${number}">
+            <visual>
+                <geometry>
+                    <box size="${tof_depth} ${tof_width} ${tof_height}" />
+                </geometry>
+                <material name="black" />
+                <origin xyz="0 0 0" rpy="0 0 0" />
+            </visual>
+        </link>
+        <joint name="baselink_to_tof_${number}" type="fixed">
+            <child link="tof_${number}" />
+            <parent link="base_link" />
+            <xacro:insert_block name="joint_pose" />
+        </joint>
+        <gazebo reference="tof_${number}">
+            <material>
+                Gazebo/Grey
+            </material>
+        </gazebo>
+    </xacro:macro>
 
-    <link name="tof_1">
-        <visual>
-            <geometry>
-                <box size="${tof_depth} ${tof_width} ${tof_height}" />
-            </geometry>
-            <material name="black" />
-            <origin xyz="0 0 0" rpy="0 0 0" />
-        </visual>
-    </link>
-    <joint name="baselink_to_tof_1" type="fixed">
-        <child link="tof_1" />
-        <parent link="base_link" />
-        <origin xyz="${front_edge+(tof_depth/2)} ${case_right_edge +(tof_width/2) + 0.020} ${(tof_height/2)+tof_z_offset}" rpy="0 0 0" />
-    </joint>
+    <xacro:tof_unit number="0">
+        <origin
+            xyz="${front_edge+(tof_depth/2)} ${case_left_edge-(tof_width/2) - 0.020} ${(tof_height/2)+tof_z_offset}"
+            rpy="0 0 0" />
+    </xacro:tof_unit>
 
-    <link name="tof_2">
-        <visual>
-            <geometry>
-                <box size="${tof_depth} ${tof_width} ${tof_height}" />
-            </geometry>
-            <material name="black" />
-            <origin xyz="0 0 0" rpy="0 0 0" />
-        </visual>
-    </link>
-    <joint name="baselink_to_tof_2" type="fixed">
-        <child link="tof_2" />
-        <parent link="base_link" />
-        <origin xyz="${front_edge-(tof_width/2 + 0.020)} ${case_left_edge+(tof_depth/2)} ${(tof_height/2)+tof_z_offset}" rpy="0 0 ${M_PI / 2}" />
-    </joint>
+    <xacro:tof_unit number="1">
+        <origin
+            xyz="${front_edge+(tof_depth/2)} ${case_right_edge +(tof_width/2) + 0.020} ${(tof_height/2)+tof_z_offset}"
+            rpy="0 0 0" />
+    </xacro:tof_unit>
 
-    <link name="tof_3">
-        <visual>
-            <geometry>
-                <box size="${tof_depth} ${tof_width} ${tof_height}" />
-            </geometry>
-            <material name="black" />
-            <origin xyz="0 0 0" rpy="0 0 0" />
-        </visual>
-    </link>
-    <joint name="baselink_to_tof_3" type="fixed">
-        <child link="tof_3" />
-        <parent link="base_link" />
-        <origin xyz="${front_edge-(tof_width/2 + 0.020)} ${case_right_edge-(tof_depth/2)} ${(tof_height/2)+tof_z_offset}" rpy="0 0 -${M_PI / 2}" />
-    </joint>
+    <xacro:tof_unit number="2">
+        <origin
+            xyz="${front_edge-(tof_width/2 + 0.020)} ${case_left_edge+(tof_depth/2)} ${(tof_height/2)+tof_z_offset}"
+            rpy="0 0 ${M_PI / 2}" />
+    </xacro:tof_unit>
 
-    <link name="tof_4">
-        <visual>
-            <geometry>
-                <box size="${tof_depth} ${tof_width} ${tof_height}" />
-            </geometry>
-            <material name="black" />
-            <origin xyz="0 0 0" rpy="0 0 0" />
-        </visual>
-    </link>
-    <joint name="baselink_to_tof_4" type="fixed">
-        <child link="tof_4" />
-        <parent link="base_link" />
-        <origin xyz="${back_edge+(tof_width/2) + 0.020} ${case_left_edge+(tof_depth/2)} ${(tof_height/2)+tof_z_offset}" rpy="0 0 ${M_PI / 2}" />
-    </joint>
+    <xacro:tof_unit number="3">
+        <origin
+            xyz="${front_edge-(tof_width/2 + 0.020)} ${case_right_edge-(tof_depth/2)} ${(tof_height/2)+tof_z_offset}"
+            rpy="0 0 -${M_PI / 2}" />
+    </xacro:tof_unit>
 
-    <link name="tof_5">
-        <visual>
-            <geometry>
-                <box size="${tof_depth} ${tof_width} ${tof_height}" />
-            </geometry>
-            <material name="black" />
-            <origin xyz="0 0 0" rpy="0 0 0" />
-        </visual>
-    </link>
-    <joint name="baselink_to_tof_5" type="fixed">
-        <child link="tof_5" />
-        <parent link="base_link" />
-        <origin xyz="${back_edge+(tof_width/2) + 0.020} ${case_right_edge-(tof_depth/2)} ${(tof_height/2)+tof_z_offset}" rpy="0 0 -${M_PI / 2}" />
-    </joint>
+    <xacro:tof_unit number="4">
+        <origin
+            xyz="${back_edge+(tof_width/2) + 0.020} ${case_left_edge+(tof_depth/2)} ${(tof_height/2)+tof_z_offset}"
+            rpy="0 0 ${M_PI / 2}" />
+    </xacro:tof_unit>
 
-    <link name="tof_6">
-        <visual>
-            <geometry>
-                <box size="${tof_depth} ${tof_width} ${tof_height}" />
-            </geometry>
-            <material name="black" />
-            <origin xyz="0 0 0" rpy="0 0 0" />
-        </visual>
-    </link>
-    <joint name="baselink_to_tof_6" type="fixed">
-        <child link="tof_6" />
-        <parent link="base_link" />
-        <origin xyz="${back_edge-(tof_depth/2)} ${case_left_edge-(tof_width/2) - 0.020} ${(tof_height/2)+tof_z_offset}" rpy="0 0 -${M_PI}" />
-    </joint>
+    <xacro:tof_unit number="5">
+        <origin
+            xyz="${back_edge+(tof_width/2) + 0.020} ${case_right_edge-(tof_depth/2)} ${(tof_height/2)+tof_z_offset}"
+            rpy="0 0 -${M_PI / 2}" />
+    </xacro:tof_unit>
 
-    <link name="tof_7">
-        <visual>
-            <geometry>
-                <box size="${tof_depth} ${tof_width} ${tof_height}" />
-            </geometry>
-            <material name="black" />
-            <origin xyz="0 0 0" rpy="0 0 0" />
-        </visual>
-    </link>
-    <joint name="baselink_to_tof_7" type="fixed">
-        <child link="tof_7" />
-        <parent link="base_link" />
-        <origin xyz="${back_edge-(tof_depth/2)} ${case_right_edge+(tof_width/2) + 0.020} ${(tof_height/2)+tof_z_offset}" rpy="0 0 -${M_PI}" />
-    </joint>
+    <xacro:tof_unit number="6">
+        <origin
+            xyz="${back_edge-(tof_depth/2)} ${case_left_edge-(tof_width/2) - 0.020} ${(tof_height/2)+tof_z_offset}"
+            rpy="0 0 -${M_PI}" />
+    </xacro:tof_unit>
+
+    <xacro:tof_unit number="7">
+        <origin
+            xyz="${back_edge-(tof_depth/2)} ${case_right_edge+(tof_width/2) + 0.020} ${(tof_height/2)+tof_z_offset}"
+            rpy="0 0 -${M_PI}" />
+    </xacro:tof_unit>
 
 </robot>
