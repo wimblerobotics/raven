@@ -129,33 +129,75 @@
   </xacro:macro>
 
   <!-- This first link called "world" is empty -->
-  <link name="world"></link>
+  <!-- <link name="world"></link> -->
 
   <!-- A simple fixed joint from our empty world link, to our base. -->
   <!-- The base origin is offset from the world origin. -->
-  <joint name="base_joint" type="fixed">
+  <!-- <joint name="base_joint" type="fixed">
     <origin xyz="0 0 0" rpy="0 -0.541 0" />
     <parent link="world" />
     <child link="odom" />
-  </joint>
-  
+  </joint> -->
+
   <gazebo reference="base_link">
     <material>
       aluminum_frame
     </material>
+    <inertial>
+      <origin xyz="0 0 0.05" rpy="0 0 0" />
+      <mass value="12" />
+      <inertia ixx="2.26" ixy="0.0" ixz="0.0" iyy="6.26" iyz="0.0" izz="8.5" />
+    </inertial>
   </gazebo>
 
-  <gazebo reference="lidar_frame_right_rear">
+  <gazebo reference="ld06_base_cylinder_left_front">
+    <material>
+      Gazebo/Grey
+    </material>
+  </gazebo>
+
+  <gazebo reference="ld06_base_cylinder_right_rear">
+    <material>
+      Gazebo/Grey
+    </material>
+  </gazebo>
+
+  <gazebo reference="ld06_box_left_front">
     <material>
       Gazebo/Black
     </material>
   </gazebo>
 
-  <gazebo reference="lidar_frame_left_front">
+  <gazebo reference="ld06_box_right_rear">
     <material>
       Gazebo/Black
     </material>
   </gazebo>
+
+  <gazebo reference="ld06_cylinder_left_front">
+    <material>
+      Gazebo/BlueGlow 
+    </material>
+  </gazebo>
+
+  <gazebo reference="ld06_cylinder_right_rear">
+    <material>
+      Gazebo/BlueGlow 
+    </material>
+  </gazebo>
+
+  <gazebo reference="ld06_frame_left_front">
+    <material>
+      Gazebo/Grey
+    </material>
+  </gazebo>
+
+  <gazebo reference="ld06_frame_right_rear">
+    <material>
+      Gazebo/Grey
+    </material>
+  </gazebo>
+
 
   <gazebo reference="sonar_0">
     <material>
@@ -235,14 +277,13 @@
     </material>
   </gazebo>
 
-  <gazebo reference="scan">
-    <!-- ray sensor -->
-    <sensor name="sensor_ray" type="ray">
+  <gazebo reference="lidar_frame_right_rear">
+    <sensor name="sensor_ray_right" type="ray">
       <ray>
         <scan>
           <horizontal>
-            <samples>360</samples>
-            <resolution>1.0</resolution>
+            <samples>450</samples>
+            <resolution>0.8</resolution>
             <min_angle>0</min_angle>
             <max_angle>6.28</max_angle>
           </horizontal>
@@ -260,10 +301,48 @@
       <always_on>true</always_on>
       <update_rate>3.0</update_rate>
 
-      <plugin name="laserscan" filename="libgazebo_ros_ray_sensor.so">
+      <plugin name="laserscan_right" filename="libgazebo_ros_ray_sensor.so">
         <ros>
-          <!-- <namespace>/</namespace> -->
-          <remapping>~/out:=/scan</remapping>
+          <remapping>~/out:=/scan_right</remapping>
+        </ros>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frame_name>scan</frame_name>
+
+      </plugin>
+      <visualize>1</visualize>
+    </sensor>
+    <material>
+      Gazebo/Black
+    </material>
+  </gazebo>
+
+  <gazebo reference="lidar_frame_left_front">
+    <sensor name="sensor_ray_left" type="ray">
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>450</samples>
+            <resolution>0.8</resolution>
+            <min_angle>0</min_angle>
+            <max_angle>6.28</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.05</min>
+          <max>10.0</max>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.02</stddev>
+        </noise>
+      </ray>
+      <always_on>true</always_on>
+      <update_rate>3.0</update_rate>
+
+      <plugin name="laserscan_left" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <remapping>~/out:=/scan_right</remapping>
         </ros>
         <output_type>sensor_msgs/LaserScan</output_type>
         <frame_name>scan</frame_name>

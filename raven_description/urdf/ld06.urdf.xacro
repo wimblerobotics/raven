@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) 2023 Michael Wimble
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="ld06">
+
+  <xacro:macro name="ld06" params="lidar_prefix *joint_pose">
+    <material name="ld06_${lidar_prefix}_grey">
+      <color rgba="0.3 0.3 0.3 1" />
+    </material>
+
+    <material name="ld06_${lidar_prefix}_blackish">
+      <color rgba="0.1 0.1 0.1 1" />
+    </material>
+
+    <material name="ld06_${lidar_prefix}_cylinder">
+      <color rgba="0.05 0.05 0.2 1" />
+    </material>
+    <xacro:property name="ldlidar_z_offset" value="-0.003" />
+
+    <xacro:property name="ld06_base_box_height" value="0.020" />
+    <xacro:property name="ld06_base_box_width" value="0.060" />
+    <xacro:property name="ld06_box_width" value="0.037" />
+    <xacro:property name="ld06_box_height" value="0.022" />
+    <xacro:property name="ld06_cylinder_height" value="0.013" />
+    <xacro:property name="ld06_cylinder_radius" value="0.015" />
+
+    <link name="ld06_box_${lidar_prefix}">
+      <collision>
+        <geometry>
+          <box size="${ld06_box_width} ${ld06_box_width} ${ld06_box_height}" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0" />
+      </collision>
+      <visual>
+        <geometry>
+          <box size="${ld06_box_width} ${ld06_box_width} ${ld06_box_height}" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <material name="ld06_${lidar_prefix}_blackish" />
+      </visual>
+    </link>
+    <link name="ld06_cylinder_${lidar_prefix}">
+      <collision>
+        <geometry>
+          <cylinder radius="${ld06_cylinder_radius}" length="${ld06_cylinder_height}" />
+        </geometry>
+      </collision>
+      <visual>
+        <geometry>
+          <cylinder radius="${ld06_cylinder_radius}" length="${ld06_cylinder_height}" />
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <material name="ld06_${lidar_prefix}_cylinder" />
+      </visual>
+    </link>
+    <link name="lidar_frame_${lidar_prefix}">
+      <collision>
+        <geometry>
+          <box size="${ld06_base_box_width} ${ld06_base_box_width / 2} ${ld06_base_box_height}" />
+        </geometry>
+      </collision>
+      <visual>
+        <geometry>
+          <box size="${ld06_base_box_width} ${ld06_base_box_width / 2} ${ld06_base_box_height}" />
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <material name="ld06_${lidar_prefix}_grey" />
+      </visual>
+    </link>
+    <link name="ld06_base_cylinder_${lidar_prefix}">
+      <collision>
+        <geometry>
+          <cylinder radius="${ld06_base_box_width / 2}" length="${ld06_base_box_height}" />
+        </geometry>
+      </collision>
+      <visual>
+        <geometry>
+          <cylinder radius="${ld06_base_box_width / 2}" length="${ld06_base_box_height}" />
+        </geometry>
+        <material name="ld06_${lidar_prefix}_grey" />
+        <origin xyz="0 ${ld06_base_box_width / 4} 0" rpy="0 0 0" />
+      </visual>
+    </link>
+    <joint name="ld06_base_cylinder_base_box_${lidar_prefix}" type="fixed">
+      <parent link="lidar_frame_${lidar_prefix}" />
+      <child link="ld06_base_cylinder_${lidar_prefix}" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <axis xyz="0 0 0" />
+    </joint>
+    <joint name="ld06_box_base_box_${lidar_prefix}" type="fixed">
+      <parent link="lidar_frame_${lidar_prefix}" />
+      <child link="ld06_box_${lidar_prefix}" />
+      <origin xyz="0 0.017 ${ld06_base_box_height}" rpy="0 0 0" />
+      <axis xyz="0 0 0" />
+    </joint>
+    <joint name="ld06_cylinder_box_${lidar_prefix}" type="fixed">
+      <parent link="ld06_box_${lidar_prefix}" />
+      <child link="ld06_cylinder_${lidar_prefix}" />
+      <origin xyz="0 0 ${ld06_box_height - ld06_cylinder_height/2}" rpy="0 0 0" />
+      <axis xyz="0 0 0" />
+    </joint>
+    <joint name="base_to_lidar_frame_${lidar_prefix}" type="fixed">
+      <parent link="base_link" />
+      <child link="lidar_frame_${lidar_prefix}" />
+      <xacro:insert_block name="joint_pose" />
+    </joint>
+
+  </xacro:macro>
+</robot>

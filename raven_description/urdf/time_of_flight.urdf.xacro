@@ -39,7 +39,7 @@ SOFTWARE.
     <joint name="baselink_to_tof_0" type="fixed">
         <child link="tof_0" />
         <parent link="base_link" />
-        <origin xyz="${front_edge+(tof_depth/2)} ${case_left_edge-(tof_width/2)} ${(tof_height/2)+tof_z_offset}" rpy="0 0 0" />
+        <origin xyz="${front_edge+(tof_depth/2)} ${case_left_edge-(tof_width/2) - 0.020} ${(tof_height/2)+tof_z_offset}" rpy="0 0 0" />
     </joint>
 
     <link name="tof_1">
@@ -54,7 +54,7 @@ SOFTWARE.
     <joint name="baselink_to_tof_1" type="fixed">
         <child link="tof_1" />
         <parent link="base_link" />
-        <origin xyz="${front_edge+(tof_depth/2)} ${case_right_edge+(tof_width/2)} ${(tof_height/2)+tof_z_offset}" rpy="0 0 0" />
+        <origin xyz="${front_edge+(tof_depth/2)} ${case_right_edge +(tof_width/2) + 0.020} ${(tof_height/2)+tof_z_offset}" rpy="0 0 0" />
     </joint>
 
     <link name="tof_2">
@@ -69,7 +69,7 @@ SOFTWARE.
     <joint name="baselink_to_tof_2" type="fixed">
         <child link="tof_2" />
         <parent link="base_link" />
-        <origin xyz="${front_edge-(tof_width/2)} ${case_left_edge+(tof_depth/2)} ${(tof_height/2)+tof_z_offset}" rpy="0 0 ${M_PI / 2}" />
+        <origin xyz="${front_edge-(tof_width/2 + 0.020)} ${case_left_edge+(tof_depth/2)} ${(tof_height/2)+tof_z_offset}" rpy="0 0 ${M_PI / 2}" />
     </joint>
 
     <link name="tof_3">
@@ -84,7 +84,7 @@ SOFTWARE.
     <joint name="baselink_to_tof_3" type="fixed">
         <child link="tof_3" />
         <parent link="base_link" />
-        <origin xyz="${front_edge-(tof_width/2)} ${case_right_edge-(tof_depth/2)} ${(tof_height/2)+tof_z_offset}" rpy="0 0 -${M_PI / 2}" />
+        <origin xyz="${front_edge-(tof_width/2 + 0.020)} ${case_right_edge-(tof_depth/2)} ${(tof_height/2)+tof_z_offset}" rpy="0 0 -${M_PI / 2}" />
     </joint>
 
     <link name="tof_4">
@@ -99,7 +99,7 @@ SOFTWARE.
     <joint name="baselink_to_tof_4" type="fixed">
         <child link="tof_4" />
         <parent link="base_link" />
-        <origin xyz="${back_edge+(tof_width/2)} ${case_left_edge+(tof_depth/2)} ${(tof_height/2)+tof_z_offset}" rpy="0 0 ${M_PI / 2}" />
+        <origin xyz="${back_edge+(tof_width/2) + 0.020} ${case_left_edge+(tof_depth/2)} ${(tof_height/2)+tof_z_offset}" rpy="0 0 ${M_PI / 2}" />
     </joint>
 
     <link name="tof_5">
@@ -114,7 +114,7 @@ SOFTWARE.
     <joint name="baselink_to_tof_5" type="fixed">
         <child link="tof_5" />
         <parent link="base_link" />
-        <origin xyz="${back_edge+(tof_width/2)} ${case_right_edge-(tof_depth/2)} ${(tof_height/2)+tof_z_offset}" rpy="0 0 -${M_PI / 2}" />
+        <origin xyz="${back_edge+(tof_width/2) + 0.020} ${case_right_edge-(tof_depth/2)} ${(tof_height/2)+tof_z_offset}" rpy="0 0 -${M_PI / 2}" />
     </joint>
 
     <link name="tof_6">
@@ -129,7 +129,7 @@ SOFTWARE.
     <joint name="baselink_to_tof_6" type="fixed">
         <child link="tof_6" />
         <parent link="base_link" />
-        <origin xyz="${back_edge-(tof_depth/2)} ${case_left_edge-(tof_width/2)} ${(tof_height/2)+tof_z_offset}" rpy="0 0 -${M_PI}" />
+        <origin xyz="${back_edge-(tof_depth/2)} ${case_left_edge-(tof_width/2) - 0.020} ${(tof_height/2)+tof_z_offset}" rpy="0 0 -${M_PI}" />
     </joint>
 
     <link name="tof_7">
@@ -144,7 +144,7 @@ SOFTWARE.
     <joint name="baselink_to_tof_7" type="fixed">
         <child link="tof_7" />
         <parent link="base_link" />
-        <origin xyz="${back_edge-(tof_depth/2)} ${case_right_edge+(tof_width/2)} ${(tof_height/2)+tof_z_offset}" rpy="0 0 -${M_PI}" />
+        <origin xyz="${back_edge-(tof_depth/2)} ${case_right_edge+(tof_width/2) + 0.020} ${(tof_height/2)+tof_z_offset}" rpy="0 0 -${M_PI}" />
     </joint>
 
 </robot>

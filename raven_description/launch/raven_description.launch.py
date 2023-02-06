@@ -1,5 +1,6 @@
 import os
 import sys
+import xacro
 import yaml
 
 import launch
@@ -25,10 +26,12 @@ def generate_launch_description():
     with open(joint_state_configFilePath, 'r') as file:
         joint_state_configParams = yaml.safe_load(file)['joint_state_publisher']['ros__parameters']   
 
+    robot_description_raw = xacro.process_file(default_model_path).toxml()
+
     robot_state_publisher_node = launch_ros.actions.Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'robot_description': Command(['xacro ', LaunchConfiguration('model'), TextSubstitution(text=" use_sim:="), use_sim_time], on_stderr='warn'),
+        parameters=[{'robot_description': robot_description_raw,
                      'use_sim_time': use_sim_time
                      }]
     )
@@ -53,8 +56,6 @@ def generate_launch_description():
                                              description='Use simulation (Gazebo) clock if true'),
         launch.actions.DeclareLaunchArgument(name='use_state_pub_gui', default_value='False',
                                              description='Flag to enable joint_state_publisher_gui'),
-        launch.actions.DeclareLaunchArgument(name='model', default_value=default_model_path,
-                                             description='Absolute path to robot urdf file'),
         joint_state_publisher_node,
         joint_state_publisher_gui_node,
         robot_state_publisher_node,
