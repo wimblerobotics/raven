@@ -53,16 +53,6 @@ SOFTWARE.
 			<dynamics damping="0.1" friction="0.5" />
 		</joint>
 
-		<transmission name="${wheel_prefix}_wheel_trans" type="SimpleTransmission">
-			<type>transmission_interface/SimpleTransmission</type>
-			<actuator name="${wheel_prefix}_wheel_motor">
-				<mechanicalReduction>1</mechanicalReduction>
-			</actuator>
-			<joint name="${wheel_prefix}_wheel">
-				<hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
-			</joint>
-		</transmission>
-
 		<gazebo reference="${wheel_prefix}_wheel_link">
 			<mu1 value="10000.0" />
 			<mu2 value="10000.0" />

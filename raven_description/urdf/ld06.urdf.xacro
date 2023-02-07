@@ -163,14 +163,14 @@ SOFTWARE.
           </noise>
         </ray>
         <always_on>true</always_on>
-        <update_rate>3.0</update_rate>
+        <update_rate>10.0</update_rate>
 
         <plugin name="laserscan_${lidar_prefix}" filename="libgazebo_ros_ray_sensor.so">
           <ros>
             <remapping>~/out:=/scan_${lidar_prefix}</remapping>
           </ros>
           <output_type>sensor_msgs/LaserScan</output_type>
-          <frame_name>scan</frame_name>
+          <frame_name>lidar_frame_${lidar_prefix}</frame_name>
 
         </plugin>
         <visualize>1</visualize>
