@@ -18,12 +18,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="ravel">
+    <xacro:include filename="$(find raven_description)/urdf/inertials.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/raven_properties.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/caster.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/ld06.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/material.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/raven_gazebo.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/wheel.urdf.xacro" />
+    <xacro:include filename="$(find raven_description)/urdf/oakd.urdf.xacro" />
 
 
     <link name="base_link">
@@ -97,4 +99,13 @@ SOFTWARE.
 
     <xacro:include filename="$(find raven_description)/urdf/time_of_flight.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/sonar.urdf.xacro" />
+
+    <xacro:oakd_link mount_point="right" />
+    <xacro:oakd_joint mount_point="right">
+        <origin xyz="0.170 -0.055 0.350" rpy="0 0 -0.523599" />
+    </xacro:oakd_joint>
+    <xacro:oakd_link mount_point="left" />
+    <xacro:oakd_joint mount_point="left">
+        <origin xyz="0.170 0.055 0.350" rpy="0 0 0.523599" />
+    </xacro:oakd_joint>
 </robot>
