@@ -17,7 +17,7 @@ def generate_launch_description():
 
     my_package_name = 'raven_description'
     pkg_share = get_package_share_directory(my_package_name)
-    default_model_path = os.path.join(pkg_share, 'urdf', 'raven.urdf.xacro')
+    default_model_path = os.path.join(pkg_share, 'urdf', 'raven_wot265.urdf.xacro')
 
     joint_state_configFilePath = os.path.join(
         get_package_share_directory(my_package_name),
