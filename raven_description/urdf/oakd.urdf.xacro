@@ -35,10 +35,40 @@ https://github.com/jetdillo/tenacity_rover/tree/0945115d723c82f1d72bb4542ab3540b
     </link>
 
     <gazebo reference="oakd_${mount_point}">
-      <material>Gazebo/White</material>
+      <material>Gazebo/Red</material>
+
+      <sensor name="camera_${mount_point}" type="camera">
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <update_rate>10</update_rate>
+        <camera name='__default__'>
+          <horizontal_fov>1.089</horizontal_fov>
+          <image>
+            <format>R8G8B8</format>
+            <width>640</width>
+            <height>480</height>
+          </image>
+          <clip>
+            <near>0.05</near>
+            <far>8.0</far>
+          </clip>
+        </camera>
+        <plugin name='camera_controller_${mount_point}' filename='libgazebo_ros_camera.so'>
+          <alwaysOn>1</alwaysOn>
+          <updateRate>0.0</updateRate>
+          <cameraName>camera_${mount_point}</cameraName>
+          <hackBaseline>0.07</hackBaseline>
+          <distortionK1>0.0</distortionK1>
+          <distortionK2>0.0</distortionK2>
+          <distortionK3>0.0</distortionK3>
+          <distortionT1>0.0</distortionT1>
+          <distortionT2>0.0</distortionT2>
+        </plugin>
+      </sensor>
+      <!-- <material>Gazebo/White</material>
       <sensor type="camera" name="oakd_camera_${mount_point}">
         <update_rate>30.0</update_rate>
-        <camera name="head">
+        <camera name="head_${mount_point}">
           <horizontal_fov>1.3962634</horizontal_fov>
           <image>
             <width>800</width>
@@ -51,35 +81,32 @@ https://github.com/jetdillo/tenacity_rover/tree/0945115d723c82f1d72bb4542ab3540b
           </clip>
           <noise>
             <type>gaussian</type>
-            <!-- Noise is sampled independently per pixel on each frame.
-               That pixel's noise value is added to each of its color
-               channels, which at that point lie in the range [0,1]. -->
             <mean>0.0</mean>
-            <stddev>0.007</stddev>
+            <stddev>
+      0.007</stddev>
           </noise>
         </camera>
-        <plugin name="camera_controller_${mount_point}" filename="libgazebo_ros_camera.so">
-          <alwaysOn>true</alwaysOn>
-          <updateRate>0.0</updateRate>
-          <cameraName>oakd_${mount_point}</cameraName>
-          <imageTopicName>${mount_point}_image_raw</imageTopicName>
-          <cameraInfoTopicName>${mount_point}_camera_info</cameraInfoTopicName>
-          <frameName>camera_link_optical</frameName>
-          <!-- setting hackBaseline to anything but 0.0 will cause a misalignment
-            between the gazebo sensor image and the frame it is supposed to
-            be attached to -->
-          <hackBaseline>0.0</hackBaseline>
-          <distortionK1>0.0</distortionK1>
-          <distortionK2>0.0</distortionK2>
-          <distortionK3>0.0</distortionK3>
-          <distortionT1>0.0</distortionT1>
-          <distortionT2>0.0</distortionT2>
-          <CxPrime>0</CxPrime>
-          <Cx>0.0</Cx>
-          <Cy>0.0</Cy>
-          <focalLength>0.0</focalLength>
-        </plugin>
-      </sensor>
+        <alwaysOn>true</alwaysOn>
+        <updateRate>20.0</updateRate>
+        <plugin
+        name="camera_controller_${mount_point}"
+        filename="libgazebo_ros_camera.so">
+        <cameraName>oakd_${mount_point}</cameraName>
+        <imageTopicName>${mount_point}_image_raw</imageTopicName>
+        <cameraInfoTopicName>${mount_point}_camera_info</cameraInfoTopicName>
+        <frameName>camera_link_optical_${mount_point}</frameName>
+        <hackBaseline>0.0</hackBaseline>
+        <distortionK1>0.0</distortionK1>
+        <distortionK2>0.0</distortionK2>
+        <distortionK3>0.0</distortionK3>
+        <distortionT1>0.0</distortionT1>
+        <distortionT2>0.0</distortionT2>
+        <CxPrime>0</CxPrime>
+        <Cx>0.0</Cx>
+        <Cy>0.0</Cy>
+        <focalLength>0.0</focalLength>
+      </plugin>
+      </sensor> -->
     </gazebo>
 
     <gazebo reference="oakd_joint_${mount_point}">

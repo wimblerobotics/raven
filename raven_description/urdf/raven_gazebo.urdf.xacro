@@ -140,7 +140,7 @@
   </joint> -->
 
   <gazebo>
-    <plugin name='diff_drive_simbot' filename='libgazebo_ros_diff_drive.so'>
+    <plugin name='diff_drive_raven' filename='libgazebo_ros_diff_drive.so'>
 
       <!-- <ros>
         <namespace>/simbot</namespace>
