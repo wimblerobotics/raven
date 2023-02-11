@@ -24,7 +24,8 @@ SOFTWARE.
     <xacro:include filename="$(find raven_description)/urdf/material.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/raven_gazebo.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/wheel.urdf.xacro" />
-
+    <xacro:include filename="$(find raven_description)/urdf/oakd.urdf.xacro" />
+    
 
     <link name="base_link">
         <collision>
@@ -149,4 +150,13 @@ SOFTWARE.
 
     <xacro:include filename="$(find raven_description)/urdf/time_of_flight.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/sonar.urdf.xacro" />
+
+    <xacro:oakd_link mount_point="right" />
+    <xacro:oakd_joint mount_point="right">
+        <origin xyz="0.170 -0.055 0.350" rpy="0 0 -0.523599" />
+    </xacro:oakd_joint>
+    <xacro:oakd_link mount_point="left" />
+    <xacro:oakd_joint mount_point="left">
+        <origin xyz="0.170 0.055 0.350" rpy="0 0 0.523599" />
+    </xacro:oakd_joint>
 </robot>
