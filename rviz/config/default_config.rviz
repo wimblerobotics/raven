@@ -20,7 +20,11 @@ Panels:
         - /Odometry1/Topic1
         - /Odometry1/Shape1
         - /Cost cloud1/Topic1
+        - /OAK-D Left Camera1
+        - /OAK-D Right Camera1
         - /Marker1/Topic1
+        - /PointCloud21
+        - /PointCloud21/Topic1
       Splitter Ratio: 0.44967880845069885
     Tree Height: 221
   - Class: rviz_common/Selection
@@ -140,16 +144,88 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        oakd_left:
+        oakd_left_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_left_imu_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_left_left_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_left_left_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_left_model_origin:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        oakd_right:
+        oakd_left_rgb_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_left_rgb_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_left_right_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_left_right_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_right_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_right_imu_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_right_left_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_right_left_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_right_model_origin:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
+        oakd_right_rgb_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_right_rgb_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_right_right_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_right_right_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        odom:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        odom_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         rcaster_wheel_link:
           Alpha: 1
           Show Axes: false
@@ -175,6 +251,15 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        t265_pose_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        t265_rotate_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         tof_0:
           Alpha: 1
           Show Axes: false
@@ -981,7 +1066,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Best Effort
-        Value: /camera_left/image_raw
+        Value: /left/image_rect
       Value: true
     - Class: rviz_default_plugins/Image
       Enabled: true
@@ -995,7 +1080,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /camera_right/image_raw
+        Value: /right/image_rect
       Value: true
     - Class: rviz_default_plugins/Axes
       Enabled: false
@@ -1071,10 +1156,44 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /line_markers
       Value: false
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz_default_plugins/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: Intensity
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 255
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Flat Squares
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Value: /stereo/points
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 136; 138; 133
-    Fixed Frame: odom_frame
+    Fixed Frame: fcaster_wheel_link
     Frame Rate: 30
   Name: root
   Tools:
@@ -1124,10 +1243,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.379797339439392
+      Pitch: 0.524797260761261
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz_default_plugins)
-      Yaw: 4.381649971008301
+      Yaw: 3.3266496658325195
     Saved: ~
 Window Geometry:
   Displays:
@@ -1151,5 +1270,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1560
-  X: 1361
-  Y: 220
+  X: 1880
+  Y: 363

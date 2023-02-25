@@ -20,12 +20,14 @@ SOFTWARE.
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="ravel">
     <xacro:include filename="$(find raven_description)/urdf/raven_properties.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/caster.urdf.xacro" />
+    <xacro:include filename="$(find raven_description)/urdf/depthai_macro.urdf.xacro" />
+    <xacro:include filename="$(find raven_description)/urdf/inertials.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/ld06.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/material.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/raven_gazebo.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/wheel.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/oakd.urdf.xacro" />
-    
+
 
     <link name="base_link">
         <collision>
@@ -151,12 +153,48 @@ SOFTWARE.
     <xacro:include filename="$(find raven_description)/urdf/time_of_flight.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/sonar.urdf.xacro" />
 
-    <xacro:oakd_link mount_point="right" />
+    <xacro:depthai_camera
+        camera_name="oakd_left"
+        camera_model="OAK-D"
+        parent="base_link"
+        base_frame="oakd_left_base_link"
+        cam_pos_x="0.170"
+        cam_pos_y="0.055"
+        cam_pos_z="0.350"
+        cam_roll="0.0"
+        cam_pitch="0.0"
+        cam_yaw="0.523599"
+    />
+    <xacro:depthai_camera
+        camera_name="oakd_right"
+        camera_model="OAK-D"
+        parent="base_link"
+        base_frame="oakd_right_base_link"
+        cam_pos_x="0.170"
+        cam_pos_y="-0.055"
+        cam_pos_z="0.350"
+        cam_roll="0.0"
+        cam_pitch="0.0"
+        cam_yaw="-0.523599"
+    />
+    <!-- <xacro:oakd_link mount_point="right" />
     <xacro:oakd_joint mount_point="right">
         <origin xyz="0.170 -0.055 0.350" rpy="0 0 -0.523599" />
     </xacro:oakd_joint>
+    <link name="oakd_left_right_camera_optical_frame" />
+    <joint name="oakd_left_link_optical_frame" type="fixed">
+        <parent link="oakd_left"/>
+        <child link="oakd_left_right_camera_optical_frame"/>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+    </joint>
     <xacro:oakd_link mount_point="left" />
     <xacro:oakd_joint mount_point="left">
         <origin xyz="0.170 0.055 0.350" rpy="0 0 0.523599" />
     </xacro:oakd_joint>
+    <link name="oakd_right_right_camera_optical_frame" />
+    <joint name="oakd_right_link_optical_frame" type="fixed">
+        <parent link="oakd_right"/>
+        <child link="oakd_right_right_camera_optical_frame"/>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+    </joint> -->
 </robot>
