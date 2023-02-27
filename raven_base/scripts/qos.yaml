@@ -83,6 +83,16 @@
   durability: volatile
   history: keep_last
   reliability: reliable
+/oakd_left/stereo/points:
+  depth: 1
+  durability: volatile
+  history: keep_last
+  reliability: reliable
+/oakd_right/stereo/points:
+  depth: 1
+  durability: volatile
+  history: keep_last
+  reliability: reliable
 /odom:
   depth: 1
   durability: volatile
