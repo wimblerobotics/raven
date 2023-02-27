@@ -56,6 +56,12 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             [common.raven_base_directory_path, '/launch/sub_launch/ldlidars.launch.py']))
     common.ld.add_action(lidars_launch)
+    
+    # Bring up the OAK-Ds
+    oakds_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [common.raven_base_directory_path, '/launch/sub_launch/oakds.launch.py']))
+    common.ld.add_action(oakds_launch)
 
     # Bring up the Nav2 stack.
     if (do_nav2):

@@ -23,8 +23,8 @@ Panels:
         - /OAK-D Left Camera1
         - /OAK-D Right Camera1
         - /Marker1/Topic1
-        - /PointCloud21
-        - /PointCloud21/Topic1
+        - /PointCloud2 Left1
+        - /PointCloud2 Right1
       Splitter Ratio: 0.44967880845069885
     Tree Height: 221
   - Class: rviz_common/Selection
@@ -359,8 +359,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 0.15504051744937897
-        Min Value: 0.15498019754886627
+        Max Value: 0.1168999969959259
+        Min Value: 0.1168999969959259
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -1159,6 +1159,40 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
+        Max Value: 28.39985466003418
+        Min Value: -26.938507080078125
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz_default_plugins/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: Intensity
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 255
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2 Left
+      Position Transformer: XYZ
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Flat Squares
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Value: /oakd_left/stereo/points
+      Use Fixed Frame: true
+      Use rainbow: false
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
         Max Value: 10
         Min Value: -10
         Value: true
@@ -1174,7 +1208,7 @@ Visualization Manager:
       Max Intensity: 255
       Min Color: 0; 0; 0
       Min Intensity: 0
-      Name: PointCloud2
+      Name: PointCloud2 Right
       Position Transformer: XYZ
       Selectable: true
       Size (Pixels): 3
@@ -1186,9 +1220,9 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Best Effort
-        Value: /stereo/points
+        Value: /oakd_right/stereo/points
       Use Fixed Frame: true
-      Use rainbow: true
+      Use rainbow: false
       Value: true
   Enabled: true
   Global Options:
@@ -1228,7 +1262,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 12.151686668395996
+      Distance: 5.848329544067383
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -1237,16 +1271,16 @@ Visualization Manager:
       Focal Point:
         X: -0.07893529534339905
         Y: 0.015657581388950348
-        Z: 0.030564427375793457
+        Z: 0
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.524797260761261
+      Pitch: 0.7897964119911194
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz_default_plugins)
-      Yaw: 3.3266496658325195
+      Yaw: 3.3773882389068604
     Saved: ~
 Window Geometry:
   Displays:
@@ -1270,5 +1304,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1560
-  X: 1880
-  Y: 363
+  X: 1476
+  Y: 170
