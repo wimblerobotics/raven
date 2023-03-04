@@ -32,17 +32,17 @@ def generate_launch_description():
 
   do_mapping_argument = DeclareLaunchArgument(
       'mapping',
-      default_value='false',
+      default_value='true',
       description='Enable mapping?')
 
-  nav_pkg_path = get_package_share_directory('nav2_bringup')
+  nav_pkg_path = get_package_share_directory('raven_base')
 
   use_sim = LaunchConfiguration('use_sim')
 
   nav_include = GroupAction(
       actions=[
           IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(nav_pkg_path + '/launch/bringup_launch.py'),
+                PythonLaunchDescriptionSource(nav_pkg_path + '/launch/sub_launch/bringup_launch.py'),
                 launch_arguments = {
                       'use_sim_time' : use_sim,
                       'map' : common.map_file_name,

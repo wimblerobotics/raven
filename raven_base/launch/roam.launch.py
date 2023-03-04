@@ -1,6 +1,7 @@
 from ament_index_python.packages import get_package_share_directory
-from launch.actions import IncludeLaunchDescription
+from launch.actions import (DeclareLaunchArgument, IncludeLaunchDescription)
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
 import launch_ros
 import os
 import sys
@@ -21,6 +22,22 @@ def generate_launch_description():
     print(f'DO_JOYSTICK: {do_joystick}')
     print(f'DO_NAV2: {do_nav2}')
     print(f'DO_RVIZ: {do_rviz}')
+
+    param_dir = LaunchConfiguration(
+        'params_file',
+        default=os.path.join(
+            get_package_share_directory('raven_base'),
+            'config',
+            'nav2_params.yaml'))
+    DeclareLaunchArgument(
+        'map',
+        default_value='map5',
+        description='Full path to map file to load'),
+
+    DeclareLaunchArgument(
+        'params_file',
+        default_value=param_dir,
+        description='Full path to param file to load'),
 
     # Bring up the T265 camera.
     t265_launch = IncludeLaunchDescription(
@@ -68,8 +85,13 @@ def generate_launch_description():
         nav2_launch = IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
                 common.raven_base_directory_path,
-                '/launch/sub_launch/nav2_stack.launch.py'
-            ]), )
+                '/launch/sub_launch/bringup_launch.py'
+            ]), 
+            launch_arguments={
+                'map': common.map_file_name,
+                'use_sim_time': common.use_sim_time,
+                'params_file': param_dir}.items()
+            )
         common.ld.add_action(nav2_launch)
 
     # Bring up rviz2
@@ -82,7 +104,7 @@ def generate_launch_description():
                                             output='screen',
                                             arguments=['-d', rviz_config_dir],
                                             parameters=[{
-                                                'use_sim_time': False
+                                                'use_sim_time': common.use_sim_time
                                             }])
         common.ld.add_action(rviz_node)
 

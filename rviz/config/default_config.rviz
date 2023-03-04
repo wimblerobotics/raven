@@ -9,8 +9,10 @@ Panels:
         - /TF1/Tree1
         - /lidar_frame_right_rear1/Topic1
         - /Merged LIDAR scan1/Topic1
+        - /Map1/Status1
         - /Map1/Topic1
         - /Map1/Update Topic1
+        - /Local CostMap1/Status1
         - /Amcl Particle Swarm1/Topic1
         - /Odometry1/Topic1
         - /Odometry1/Shape1
@@ -350,8 +352,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 0.1168999969959259
-        Min Value: 0.1168999969959259
+        Max Value: 0.167676642537117
+        Min Value: 0.1508689671754837
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -487,14 +489,14 @@ Visualization Manager:
       Class: rviz_default_plugins/Map
       Color Scheme: map
       Draw Behind: true
-      Enabled: false
+      Enabled: true
       Name: Map
       Topic:
         Depth: 1
-        Durability Policy: Volatile
+        Durability Policy: Transient Local
         Filter size: 10
         History Policy: Keep Last
-        Reliability Policy: Best Effort
+        Reliability Policy: Reliable
         Value: /map
       Update Topic:
         Depth: 5
@@ -503,12 +505,12 @@ Visualization Manager:
         Reliability Policy: Best Effort
         Value: /map_updates
       Use Timestamp: false
-      Value: false
+      Value: true
     - Alpha: 0.20000000298023224
       Class: rviz_default_plugins/Map
       Color Scheme: costmap
       Draw Behind: true
-      Enabled: false
+      Enabled: true
       Name: Global costmap
       Topic:
         Depth: 5
@@ -524,7 +526,7 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /global_costmap/costmap_updates
       Use Timestamp: false
-      Value: false
+      Value: true
     - Alpha: 0.699999988079071
       Class: rviz_default_plugins/Map
       Color Scheme: costmap
@@ -1166,7 +1168,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 136; 138; 133
-    Fixed Frame: fcaster_wheel_link
+    Fixed Frame: map
     Frame Rate: 30
   Name: root
   Tools:
@@ -1201,25 +1203,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 5.848329544067383
+      Distance: 11.570171356201172
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.07893529534339905
-        Y: 0.015657581388950348
-        Z: 0
+        X: 3.5912983417510986
+        Y: -11.652743339538574
+        Z: 0.00479608541354537
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5047963261604309
+      Pitch: 1.5697963237762451
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz_default_plugins)
-      Yaw: 3.0973880290985107
+      Yaw: 3.1523871421813965
     Saved: ~
 Window Geometry:
   Displays:

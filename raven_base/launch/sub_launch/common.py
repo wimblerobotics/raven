@@ -11,8 +11,8 @@ multiplexer_directory_path = get_package_share_directory('twist_multiplexer');
 raven_base_directory_path = get_package_share_directory('raven_base')
 raven_description_directory_path = get_package_share_directory('raven_description')
 rviz_directory_path = get_package_share_directory('rviz')
-
 urdf_path = os.path.join(raven_description_directory_path, 'urdf/raven.urdf.xacro')
+use_sim_time = LaunchConfiguration('use_sim_time')
 
 ld = LaunchDescription()
 
@@ -32,7 +32,7 @@ ld.add_action(DeclareLaunchArgument(
     description='Absolute path to robot urdf file'))
 
 ld.add_action(DeclareLaunchArgument(
-    name='use_sim', 
+    name='use_sim_time', 
     default_value='false',
     description='Use simulation (Gazebo) clock if true'))
 
