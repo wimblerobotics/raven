@@ -2,162 +2,162 @@
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /bluetoothJoystick:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /cmd_vel:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /cmd_vel_joystick:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /cmd_vel_keyboard:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /cmd_vel_navigation:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /global_costmap/costma:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /goal_pose:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /initialpose:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /joint_states:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /line_markers:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /line_markers_array:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /local_costmap/costmap:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /local_costmap/published_footprint:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /local_plan:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /map:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /map_metadata:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /oakd_left/stereo/points:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /oakd_right/stereo/points:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /odom:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /parameter_events:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /plan:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /roboclaw_status:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /robot_description:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /scan:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /scan_left_front:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /scan_right_rear:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /sonar0Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /sonar1Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /sonar2Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /sonar3Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /t265/fisheye1/camera_info:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /t265/fisheye1/image_raw:
   depth: 1
   durability: volatile
@@ -167,7 +167,7 @@
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /t265/fisheye2/image_raw:
   depth: 1
   durability: volatile
@@ -177,69 +177,69 @@
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /teensy_stats:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /temperature:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /tf:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /tf_static:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /tof0Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /tof1Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /tof2Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /tof3Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /tof4Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /tof5Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /tof6Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /tof7Sensor:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort
 /waypoints:
   depth: 1
   durability: volatile
   history: keep_last
-  reliability: reliable
+  reliability: best_effort

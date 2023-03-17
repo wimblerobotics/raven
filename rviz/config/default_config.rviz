@@ -9,17 +9,17 @@ Panels:
         - /TF1/Tree1
         - /lidar_frame_right_rear1/Topic1
         - /Merged LIDAR scan1/Topic1
-        - /Map1/Status1
         - /Map1/Topic1
         - /Map1/Update Topic1
-        - /Local CostMap1/Status1
         - /Amcl Particle Swarm1/Topic1
+        - /Global Planner1
         - /Odometry1/Topic1
         - /Odometry1/Shape1
         - /Cost cloud1/Topic1
         - /Marker1/Topic1
+        - /PoseWithCovariance1/Topic1
       Splitter Ratio: 0.5438972115516663
-    Tree Height: 250
+    Tree Height: 287
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -352,8 +352,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 0.167676642537117
-        Min Value: 0.1508689671754837
+        Max Value: 0.16032814979553223
+        Min Value: 0.15350715816020966
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -429,7 +429,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: Intensity
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 255
@@ -450,7 +450,7 @@ Visualization Manager:
         Value: /oakd_left/stereo/points
       Use Fixed Frame: false
       Use rainbow: false
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -463,7 +463,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: Intensity
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 255
@@ -484,7 +484,7 @@ Visualization Manager:
         Value: /oakd_right/stereo/points
       Use Fixed Frame: true
       Use rainbow: false
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz_default_plugins/Map
       Color Scheme: map
@@ -510,7 +510,7 @@ Visualization Manager:
       Class: rviz_default_plugins/Map
       Color Scheme: costmap
       Draw Behind: true
-      Enabled: true
+      Enabled: false
       Name: Global costmap
       Topic:
         Depth: 5
@@ -526,12 +526,12 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /global_costmap/costmap_updates
       Use Timestamp: false
-      Value: true
+      Value: false
     - Alpha: 0.699999988079071
       Class: rviz_default_plugins/Map
       Color Scheme: costmap
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: Local CostMap
       Topic:
         Depth: 5
@@ -547,7 +547,7 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /local_costmap/costmap_updates
       Use Timestamp: false
-      Value: true
+      Value: false
     - Class: rviz_common/Group
       Displays:
         - Alpha: 0.5
@@ -896,7 +896,7 @@ Visualization Manager:
           Class: rviz_default_plugins/Map
           Color Scheme: costmap
           Draw Behind: false
-          Enabled: true
+          Enabled: false
           Name: Downsampled Costmap
           Topic:
             Depth: 1
@@ -912,7 +912,7 @@ Visualization Manager:
             Reliability Policy: Reliable
             Value: /downsampled_costmap_updates
           Use Timestamp: false
-          Value: true
+          Value: false
         - Alpha: 1
           Buffer Length: 1
           Class: rviz_default_plugins/Path
@@ -978,7 +978,7 @@ Visualization Manager:
         - Alpha: 1
           Class: rviz_default_plugins/Polygon
           Color: 25; 255; 0
-          Enabled: false
+          Enabled: true
           Name: Polygon
           Topic:
             Depth: 5
@@ -987,8 +987,8 @@ Visualization Manager:
             History Policy: Keep Last
             Reliability Policy: Reliable
             Value: /global_costmap/published_footprint
-          Value: false
-      Enabled: false
+          Value: true
+      Enabled: true
       Name: Global Planner
     - Angle Tolerance: 0.10000000149011612
       Class: rviz_default_plugins/Odometry
@@ -1064,7 +1064,7 @@ Visualization Manager:
       Use rainbow: true
       Value: false
     - Class: rviz_default_plugins/Image
-      Enabled: true
+      Enabled: false
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -1076,9 +1076,9 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Best Effort
         Value: /oakd_left/left/image_rect
-      Value: true
+      Value: false
     - Class: rviz_default_plugins/Image
-      Enabled: true
+      Enabled: false
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -1090,7 +1090,7 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /oakd_right/right/image_rect
-      Value: true
+      Value: false
     - Class: rviz_default_plugins/Axes
       Enabled: false
       Length: 1
@@ -1124,34 +1124,6 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /local_costmap/published_footprint
       Value: false
-    - Alpha: 1
-      Buffer Length: 1
-      Class: rviz_default_plugins/Path
-      Color: 25; 255; 0
-      Enabled: false
-      Head Diameter: 0.30000001192092896
-      Head Length: 0.20000000298023224
-      Length: 0.30000001192092896
-      Line Style: Lines
-      Line Width: 0.029999999329447746
-      Name: Plan Path
-      Offset:
-        X: 0
-        Y: 0
-        Z: 0
-      Pose Color: 255; 85; 255
-      Pose Style: None
-      Radius: 0.029999999329447746
-      Shaft Diameter: 0.10000000149011612
-      Shaft Length: 0.10000000149011612
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /plan
-      Value: false
     - Class: rviz_default_plugins/Marker
       Enabled: false
       Name: Marker
@@ -1165,6 +1137,41 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /line_markers
       Value: false
+    - Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Class: rviz_default_plugins/PoseWithCovariance
+      Color: 255; 25; 0
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
+      Enabled: true
+      Head Length: 0.30000001192092896
+      Head Radius: 0.10000000149011612
+      Name: PoseWithCovariance
+      Shaft Length: 1
+      Shaft Radius: 0.05000000074505806
+      Shape: Arrow
+      Topic:
+        Depth: 5
+        Durability Policy: Transient Local
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Value: /amcl_pose
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 136; 138; 133
@@ -1203,25 +1210,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 11.570171356201172
+      Distance: 8.501836776733398
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 3.5912983417510986
-        Y: -11.652743339538574
-        Z: 0.00479608541354537
+        X: 9.278793334960938
+        Y: 1.8030529022216797
+        Z: -0.7734812498092651
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.5697963237762451
+      Pitch: 1.5597963333129883
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz_default_plugins)
-      Yaw: 3.1523871421813965
+      Yaw: 4.705572128295898
     Saved: ~
 Window Geometry:
   Displays:
@@ -1235,7 +1242,7 @@ Window Geometry:
     collapsed: false
   OAK-D Right Camera:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000001d500000432fc020000000ffb0000001200530065006c0065006300740069006f006e010000003d000000910000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c00610079007301000000d400000137000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb00000018004e0061007600690067006100740069006f006e0020003200000001d40000013a0000013900fffffffb0000001e005200650061006c00730065006e0073006500430061006d00650072006101000001ee0000004b0000000000000000fb0000000c00430061006d00650072006101000002bd000000160000000000000000fb00000022004f0041004b002d00440020004c006500660074002000430061006d0065007200610100000211000001220000002800fffffffb0000000c00430061006d00650072006101000001f4000000df0000000000000000fb00000024004f0041004b002d0044002000520069006700680074002000430061006d0065007200610100000339000001360000002800fffffffb0000000a0049006d0061006700650100000312000000bc0000000000000000000000010000010f00000390fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003d00000390000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004420000003efc0100000002fb0000000800540069006d00650100000000000004420000000000000000fb0000000800540069006d006501000000000000045000000000000000000000043d0000043200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001d500000432fc020000000ffb0000001200530065006c0065006300740069006f006e010000003d000000ab0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c00610079007301000000ee0000015c000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb00000018004e0061007600690067006100740069006f006e0020003201000002500000021f0000013900fffffffb0000001e005200650061006c00730065006e0073006500430061006d00650072006101000001ee0000004b0000000000000000fb0000000c00430061006d00650072006101000002bd000000160000000000000000fb00000022004f0041004b002d00440020004c006500660074002000430061006d00650072006100000002b4000001360000002800fffffffb0000000c00430061006d00650072006101000001f4000000df0000000000000000fb00000024004f0041004b002d0044002000520069006700680074002000430061006d00650072006100000003ba000000b50000002800fffffffb0000000a0049006d0061006700650100000312000000bc0000000000000000000000010000010f00000432fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003d00000432000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004420000003efc0100000002fb0000000800540069006d00650100000000000004420000000000000000fb0000000800540069006d006501000000000000045000000000000000000000043d0000043200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Tool Properties:
@@ -1243,5 +1250,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1560
-  X: 1476
-  Y: 170
+  X: 301
+  Y: 182
