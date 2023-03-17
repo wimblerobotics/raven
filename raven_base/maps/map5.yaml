@@ -1,8 +1,13 @@
 # image: map5.pgm
-image: f5.pgm
-mode: trinary
 #resolution: 0.05
-resolution: 0.002815306
+
+# image: f5.pgm
+# resolution: 0.002815306
+
+image: f5c.pgm
+resolution: 0.05
+
+mode: trinary
 origin: [0.0, 0.0, 0.000000]
 negate: 1
 occupied_thresh: 0.65
