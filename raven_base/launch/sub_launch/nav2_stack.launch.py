@@ -10,6 +10,10 @@ from nav2_common.launch import RewrittenYaml
 import os
 import sys
 
+raven_sub_launch_path = os.path.join(get_package_share_directory('raven_base'),
+                                    'launch', 'sub_launch')
+sys.path.append(raven_sub_launch_path)
+# print(sys.path)
 import common
 
 def generate_launch_description():

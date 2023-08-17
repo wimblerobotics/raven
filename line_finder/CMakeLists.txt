@@ -17,12 +17,14 @@ endif()
 
 add_compile_options(-g)
 
+#find_path(MATPLOTLIB_CPP_INCLUDE_DIRS "matplotlibcpp.h")
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 find_package(geometry_msgs REQUIRED)
-find_package(matplotlib_cpp REQUIRED)
+#find_package(matplotlib_cpp REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(PythonLibs REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -74,6 +76,7 @@ ament_target_dependencies(
 target_include_directories(
   linecv
   PUBLIC
+#  ${MATPLOTLIB_CPP_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   ${rclcpp_INCLUDE_DIRS}
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -103,6 +106,7 @@ target_include_directories(
   lf
   PUBLIC
   ${EIGEN3_INCLUDE_DIR}
+#  ${MATPLOTLIB_CPP_INCLUDE_DIRS}
   ${rclcpp_INCLUDE_DIRS}
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
@@ -121,7 +125,7 @@ target_link_libraries(laser_accumulator
 ament_target_dependencies(
   laser_accumulator
   geometry_msgs
-  matplotlib_cpp
+#  matplotlib_cpp
   rclcpp
   sensor_msgs
   tf2_geometry_msgs

@@ -39,6 +39,26 @@ def generate_launch_description():
                      }]
     )
 
+    # lidar_merge_node = launch_ros.actions.Node(
+    #         package='ira_laser_tools',
+    #         executable='laserscan_multi_merger',
+    #         name='laserscan_multi_merger',
+    #         parameters=[{
+    #                 "destination_frame": "base_link",
+    #                 "cloud_destination_topic": "/merged_lidar_cloud",
+    #                 "scan_destination_topic": "/scan",
+    #                 "laserscan_topics": "/scan_left_front /scan_right_rear",
+    #                 "angle_min": -3.14159,
+    #                 "angle_max": 3.14159,
+    #                 "angle_increment": 0.013935472816228867,
+    #                 "scan_time": 0.010,
+    #                 "range_min": 0.010,
+    #                 "range_max": 50.0
+    #         }],
+    #         # prefix=['xterm -e gdb run -ex --args'],
+    #         # respawn=True,
+    #         output='screen')
+    
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
             get_package_share_directory('gazebo_ros'), 'launch'), '/gazebo.launch.py']),
@@ -58,6 +78,7 @@ def generate_launch_description():
         launch.actions.DeclareLaunchArgument(name='use_state_pub_gui', default_value='False',
                                              description='Flag to enable joint_state_publisher_gui'),
         gazebo,
+        # lidar_merge_node,
         robot_state_publisher_node,
         spawn_entity
     ])
