@@ -1,0 +1,54 @@
+FROM ros2_iron_base AS base
+
+###
+# Opencv install
+###
+
+RUN \
+    git clone https://github.com/opencv/opencv.git && \
+    git clone https://github.com/opencv/opencv_contrib.git
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    libavcodec-dev \
+    libavformat-dev \
+    libswscale-dev \
+    # libgstreamer-plugins-base1.0-dev \
+    # libgstreamer1.0-dev \
+    libgtk-3-common \
+    libpng-dev \
+    libjpeg-dev \
+    libopenexr-dev \
+    libtiff-dev libwebp-dev && \
+    rm -rf /var/lib/apt/lists/* && apt autoremove && apt clean
+
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
+ENV NVIDIA_REQUIRE_CUDA "cuda>=8.0"
+
+RUN \
+    cd opencv && \
+    mkdir build && \
+    cd build && \
+    cmake \
+    -D CMAKE_BUILD_TYPE=RELEASE \
+    -D CMAKE_INSTALL_PREFIX=/usr/local \
+    -D WITH_CUDA=ON \
+    -D WITH_CUDNN=ON \
+    -D WITH_CUBLAS=ON \
+    -D WITH_TBB=ON \
+    -D OPENCV_DNN_CUDA=ON \
+    -D OPENCV_ENABLE_NONFREE=ON \
+    -D CUDA_ARCH_BIN=7.5 \
+    -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
+    -D BUILD_EXAMPLES=ON \
+    -D HAVE_opencv_python3=ON \
+    .. && \
+    make -j 12 && \
+    make install && \
+    ldconfig 
+    # ls /usr/local && ls /usr/local/lib && ls /usr/local/lib/python3.8 && ls /usr/local/lib/python3.8/site-packages && ls /usr/local/lib/python3.8/site-packages/cv2 && \
+    # ls /usr/local/lib/python3.8/dist-packages && \
+    # ln -s /usr/local/lib/python3.8/site-packages/cv2 /usr/local/lib/python3.8/dist-packages/cv2
+
+# COPY requirements.txt /usr/src/app/
+# RUN pip install --no-cache-dir -r requirements.txt

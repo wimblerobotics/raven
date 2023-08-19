@@ -1,0 +1,93 @@
+FROM osrf/ros:iron-desktop-full-jammy
+LABEL maintainer="mike@wimblerobotics.com"
+
+ARG user_id=1000
+ARG ros_ws=/home/ros2/dev_ws
+
+# Install packages.
+RUN apt-get update && apt-get install -y \
+    ros-${ROS_DISTRO}-gazebo-* \
+    python-is-python3 \
+    nano \
+    less \
+    xterm
+
+RUN useradd -m --uid ${user_id} ros2
+USER ros2
+WORKDIR /home/ros2
+
+# ENVs
+ENV HOME=/home/ros2
+ENV PATH="/home/ros2/.local/bin:${PATH}"
+# Force Python stdout and stderr streams to be unbuffered.
+ENV PYTHONUNBUFFERED 1
+
+ENV DEBIAN_FRONTEND noninteractive
+RUN echo "Set disable_coredump false" >> /etc/sudo.conf
+
+# Add sourcing to your shell startup script
+RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
+
+# Add `colcon_cd` to your shell startup script
+# https://docs.ros.org/en/galactic/Tutorials/Configuring-ROS2-Environment.html#add-colcon-cd-to-your-shell-startup-script
+RUN echo "source /usr/share/colcon_cd/function/colcon_cd.sh" >> ~/.bashrc \
+    && echo "export _colcon_cd_root=${ros_ws}" >> ~/.bashrc
+
+# RUN apt-get update -q && \
+#     apt-get upgrade -yq
+
+# install packages
+# RUN apt-get install-y\
+#     binutils \
+#     dirmngr \
+#     git \
+#     gnupg2 \
+#     libgtk-3-common \
+#     libssl-dev \
+#     libusb-1.0-0-dev \
+#     libyaml-cpp-dev \
+#     lsb-release \
+#     openssh-client \
+#     pkg-config \
+#     python3-colcon-common-extensions 
+#     # ament-cmake \
+#     # emacs \
+#     # keyboard-configuration=1.194* \
+#     # kmod \
+#     # mesa-utils \
+#     # nlohmann-json3-dev \
+#     # nano \
+#     # python3-pip \
+#     # python3-rosdep2 \
+#     # ros-humble-laser-geometry \
+#     # ros-humble-joint-state-publisher \
+#     # ros-humble-xacro \
+#     # ros-humble-nav2-* \
+#     # ros-humble-pcl-ros \
+#     # software-properties-common \
+#     # usbutils \
+#     # wget
+
+# RUN yes | unminimize
+
+RUN rm -rf /var/lib/apt/lists/*
+
+# This entrypoint is from base image.
+# See https://github.com/osrf/docker_images/blob/master/ros/galactic/ubuntu/focal/ros-core/ros_entrypoint.sh
+# ENTRYPOINT ["/ros_entrypoint.sh"]
+
+# RUN git clone https://github.com/Microsoft/vcpkg.git
+# RUN cd vcpkg; \
+#     ./bootstrap-vcpkg.sh; \
+#     ./vcpkg integrate install; \
+#     ./vcpkg install matplotlib-cpp; \
+#     cp /home/ros/vcpkg/installed/x64-linux/include/matplotlibcpp.h /usr/include/
+
+
+# RUN apt-key adv --keyserver keys.gnupg.net --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE || apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE
+# RUN add-apt-repository -y "deb http://realsense-hw-public.s3.amazonaws.com/Debian/apt-repo bionic main" -u
+# RUN apt-get install -y librealsense2-dkms librealsense2-utils
+# RUN usermod -a -G video ubuntu
+# RUN getent group video
+
+# ENV USER ubuntu
