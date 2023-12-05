@@ -64,17 +64,18 @@ SOFTWARE.
 
     <link name="base_footprint" />
 
-    <link name="odom" />
-    <link name="odom_frame" />
-    <joint name="odom_to_odom_frame_joint" type="fixed">
-        <origin xyz="0 0 0" rpy="0 0 0" />> <parent link="odom" />
+
+    <!--joint name="odom_to_odom_frame_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <parent link="odom" />
         <child link="odom_frame" />
-    </joint>
-    <joint name="odom_frame_to_t265_pose_frame_joint" type="fixed">
+    </joint> -->
+
+    <!-- joint name="odom_frame_to_t265_pose_frame_joint" type="fixed">
         <origin xyz="0 0 0" rpy="0 0 0" />> <parent link="odom_frame" />
         <child
             link="t265_pose_frame" />
-    </joint>
+    </joint> -->
 
     <joint name="base_footprint_joint" type="fixed">
         <origin xyz="0 0 ${base_to_floor_z_offset}" rpy="0 0 0" />
@@ -112,7 +113,7 @@ SOFTWARE.
 
     <!-- T265 y tilt is 31 degrees or 0.541 radians -->
     <!-- Visual odometry camera -->
-    <link name="t265_pose_frame">
+    <!-- <link name="t265_pose_frame">
         <collision>
             <geometry>
                 <box size="${t265_width} ${t265_length} ${t265_height}" />
@@ -137,23 +138,19 @@ SOFTWARE.
         <parent link="t265_rotate_frame" />
         <child link="base_footprint" />
         <origin xyz="-${t265_x_offset} 0 -${t265_z_offset}" rpy="0 0 0" />
-        <!--
-        <child link="base_footprint" />
-        <origin xyz="-${t265_x_offset} 0 -${t265_z_offset}" rpy="0 0.541 0 " />
-        -->
     </joint>
 
     <link name="t265_rotate_frame" />
     <joint name="t265_rotator_joint" type="fixed">
         <parent link="t265_pose_frame" />
         <child link="t265_rotate_frame" />
-        <origin xyz="0 0 0" rpy="0 0.541 0" />
-    </joint>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+    </joint> -->
 
     <xacro:include filename="$(find raven_description)/urdf/time_of_flight.urdf.xacro" />
     <xacro:include filename="$(find raven_description)/urdf/sonar.urdf.xacro" />
 
-    <xacro:depthai_camera
+    <!-- <xacro:depthai_camera
         camera_name="oakd_left"
         camera_model="OAK-D"
         parent="base_link"
@@ -176,7 +173,8 @@ SOFTWARE.
         cam_roll="0.0"
         cam_pitch="0.0"
         cam_yaw="-0.523599"
-    />
+    /> -->
+    
     <!-- <xacro:oakd_link mount_point="right" />
     <xacro:oakd_joint mount_point="right">
         <origin xyz="0.170 -0.055 0.350" rpy="0 0 -0.523599" />

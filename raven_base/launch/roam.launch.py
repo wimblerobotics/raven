@@ -40,10 +40,21 @@ def generate_launch_description():
         description='Full path to param file to load'),
 
     # Bring up the T265 camera.
-    t265_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [common.raven_base_directory_path, '/launch/sub_launch/t265.launch.py']))
-    common.ld.add_action(t265_launch)
+    # t265_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         [common.raven_base_directory_path, '/launch/sub_launch/t265.launch.py']))
+    # common.ld.add_action(t265_launch)
+    
+    # Bring up robot localization
+    start_robot_localization_cmd = launch_ros.actions.Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[common.ekf_config_path, 
+            {'use_sim_time': common.use_sim_time}])
+    common.ld.add_action(start_robot_localization_cmd)
+
 
     # Bring up the joystick.
     if do_joystick:
@@ -74,18 +85,19 @@ def generate_launch_description():
             [common.raven_base_directory_path, '/launch/sub_launch/ldlidars.launch.py']))
     common.ld.add_action(lidars_launch)
     
-    # Bring up the OAK-Ds
-    oakds_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [common.raven_base_directory_path, '/launch/sub_launch/oakds.launch.py']))
-    common.ld.add_action(oakds_launch)
+    # # Bring up the OAK-Ds
+    # oakds_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         [common.raven_base_directory_path, '/launch/sub_launch/oakds.launch.py']))
+    # common.ld.add_action(oakds_launch)
 
     # Bring up the Nav2 stack.
     if (do_nav2):
         nav2_launch = IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
                 common.raven_base_directory_path,
-                '/launch/sub_launch/bringup_launch.py'
+                # '/launch/sub_launch/bringup_launch.py'
+                '/launch/navigation_bringup_launch.py'
             ]), 
             launch_arguments={
                 'map': common.map_file_name,

@@ -14,6 +14,8 @@ rviz_directory_path = get_package_share_directory('rviz')
 urdf_path = os.path.join(raven_description_directory_path, 'urdf/raven.urdf.xacro')
 use_sim_time = LaunchConfiguration('use_sim_time')
 
+ekf_config_path = os.path.join(raven_base_directory_path, 'config/ekf.yaml')
+
 ld = LaunchDescription()
 
 ld.add_action(DeclareLaunchArgument(

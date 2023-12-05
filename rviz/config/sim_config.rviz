@@ -7,17 +7,22 @@ Panels:
         - /Global Options1
         - /TF1/Frames1
         - /TF1/Tree1
+        - /lidar_frame_right_rear1
+        - /lidar_frame_right_rear1/Status1
+        - /lidar_frame_right_rear1/Topic1
+        - /Merged LIDAR scan1
+        - /Merged LIDAR scan1/Status1
         - /Merged LIDAR scan1/Topic1
         - /Map1/Topic1
         - /Map1/Update Topic1
         - /Amcl Particle Swarm1/Topic1
-        - /Odometry1
+        - /Global Planner1
         - /Odometry1/Topic1
         - /Odometry1/Shape1
         - /Cost cloud1/Topic1
         - /Marker1/Topic1
         - /PoseWithCovariance1/Topic1
-      Splitter Ratio: 0.34863701462745667
+      Splitter Ratio: 0.5438972115516663
     Tree Height: 287
   - Class: rviz_common/Selection
     Name: Selection
@@ -65,20 +70,240 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /robot_description
-      Enabled: false
+      Enabled: true
       Links:
         All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        base_footprint:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        fcaster_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_left_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_right_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ld06_base_cylinder_left_front:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ld06_base_cylinder_right_rear:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ld06_box_left_front:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ld06_box_right_rear:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ld06_cylinder_left_front:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ld06_cylinder_right_rear:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        lidar_frame_left_front:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        lidar_frame_right_rear:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        oakd_left_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_left_imu_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_left_left_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_left_left_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_left_model_origin:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        oakd_left_rgb_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_left_rgb_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_left_right_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_left_right_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_right_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_right_imu_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_right_left_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_right_left_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_right_model_origin:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        oakd_right_rgb_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_right_rgb_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_right_right_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oakd_right_right_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        odom:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        odom_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        rcaster_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        sonar_0:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        sonar_1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        sonar_2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        sonar_3:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        t265_pose_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        t265_rotate_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        tof_0:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        tof_1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        tof_2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        tof_3:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        tof_4:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        tof_5:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        tof_6:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        tof_7:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
       Mass Properties:
         Inertia: false
         Mass: false
       Name: RobotModel
       TF Prefix: ""
       Update Interval: 0
-      Value: false
+      Value: true
       Visual Enabled: true
     - Class: rviz_default_plugins/TF
       Enabled: false
@@ -116,7 +341,7 @@ Visualization Manager:
       Position Transformer: XYZ
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.02539999969303608
+      Size (m): 0.029999999329447746
       Style: Flat Squares
       Topic:
         Depth: 10
@@ -174,7 +399,7 @@ Visualization Manager:
       Color: 239; 41; 41
       Color Transformer: FlatColor
       Decay Time: 0
-      Enabled: false
+      Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 4096
@@ -188,14 +413,14 @@ Visualization Manager:
       Style: Flat Squares
       Topic:
         Depth: 5
-        Durability Policy: Volatile
+        Durability Policy: Transient Local
         Filter size: 10
         History Policy: Keep Last
-        Reliability Policy: Reliable
+        Reliability Policy: Best Effort
         Value: /scan
       Use Fixed Frame: true
       Use rainbow: true
-      Value: false
+      Value: true
     - Alpha: 0.20000000298023224
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -268,14 +493,14 @@ Visualization Manager:
       Class: rviz_default_plugins/Map
       Color Scheme: map
       Draw Behind: true
-      Enabled: true
+      Enabled: false
       Name: Map
       Topic:
         Depth: 1
         Durability Policy: Transient Local
         Filter size: 10
         History Policy: Keep Last
-        Reliability Policy: Best Effort
+        Reliability Policy: Reliable
         Value: /map
       Update Topic:
         Depth: 5
@@ -284,7 +509,28 @@ Visualization Manager:
         Reliability Policy: Best Effort
         Value: /map_updates
       Use Timestamp: false
-      Value: true
+      Value: false
+    - Alpha: 0.20000000298023224
+      Class: rviz_default_plugins/Map
+      Color Scheme: costmap
+      Draw Behind: true
+      Enabled: false
+      Name: Global costmap
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /global_costmap/costmap
+      Update Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /global_costmap/costmap_updates
+      Use Timestamp: false
+      Value: false
     - Alpha: 0.699999988079071
       Class: rviz_default_plugins/Map
       Color Scheme: costmap
@@ -364,7 +610,7 @@ Visualization Manager:
             Reliability Policy: Best Effort
             Value: /sonar0Sensor
           Value: true
-      Enabled: false
+      Enabled: true
       Name: SonarGroup
     - Class: rviz_common/Group
       Displays:
@@ -480,7 +726,7 @@ Visualization Manager:
             Reliability Policy: Best Effort
             Value: /tof7Sensor
           Value: true
-      Enabled: false
+      Enabled: true
       Name: TofGroup
     - Alpha: 1
       Arrow Length: 0.019999999552965164
@@ -746,7 +992,7 @@ Visualization Manager:
             Reliability Policy: Reliable
             Value: /global_costmap/published_footprint
           Value: true
-      Enabled: false
+      Enabled: true
       Name: Global Planner
     - Angle Tolerance: 0.10000000149011612
       Class: rviz_default_plugins/Odometry
@@ -765,7 +1011,7 @@ Visualization Manager:
           Scale: 1
           Value: true
         Value: false
-      Enabled: true
+      Enabled: false
       Keep: 1
       Name: Odometry
       Position Tolerance: 0.10000000149011612
@@ -785,8 +1031,8 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Best Effort
-        Value: /odometry/filtered
-      Value: true
+        Value: /odom
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -996,17 +1242,17 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 10
+      Distance: 10.247261047363281
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
-      Focal Shape Fixed Size: false
+        X: 0.6375105977058411
+        Y: 0.5099043250083923
+        Z: 0.0013826362555846572
+      Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
@@ -1014,27 +1260,27 @@ Visualization Manager:
       Pitch: 1.5697963237762451
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz_default_plugins)
-      Yaw: 3.1303977966308594
+      Yaw: 3.1242148876190186
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
   Height: 1164
   Hide Left Dock: false
-  Hide Right Dock: true
+  Hide Right Dock: false
   Navigation 2:
     collapsed: false
   OAK-D Left Camera:
     collapsed: false
   OAK-D Right Camera:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000002bb00000432fc020000000ffb0000001200530065006c0065006300740069006f006e010000003d000000ab0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c00610079007301000000ee0000015c000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb00000018004e0061007600690067006100740069006f006e0020003201000002500000021f0000013900fffffffb0000001e005200650061006c00730065006e0073006500430061006d00650072006101000001ee0000004b0000000000000000fb0000000c00430061006d00650072006101000002bd000000160000000000000000fb00000022004f0041004b002d00440020004c006500660074002000430061006d00650072006100000002b4000001360000002800fffffffb0000000c00430061006d00650072006101000001f4000000df0000000000000000fb00000024004f0041004b002d0044002000520069006700680074002000430061006d00650072006100000003ba000000b50000002800fffffffb0000000a0049006d0061006700650100000312000000bc0000000000000000000000010000010f00000432fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003d00000432000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004420000003efc0100000002fb0000000800540069006d00650100000000000004420000000000000000fb0000000800540069006d00650100000000000004500000000000000000000003570000043200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001d500000432fc020000000ffb0000001200530065006c0065006300740069006f006e010000003d000000ab0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c00610079007301000000ee0000015c000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb00000018004e0061007600690067006100740069006f006e0020003201000002500000021f0000013900fffffffb0000001e005200650061006c00730065006e0073006500430061006d00650072006101000001ee0000004b0000000000000000fb0000000c00430061006d00650072006101000002bd000000160000000000000000fb00000022004f0041004b002d00440020004c006500660074002000430061006d00650072006100000002b4000001360000002800fffffffb0000000c00430061006d00650072006101000001f4000000df0000000000000000fb00000024004f0041004b002d0044002000520069006700680074002000430061006d00650072006100000003ba000000b50000002800fffffffb0000000a0049006d0061006700650100000312000000bc0000000000000000000000010000010f00000432fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003d00000432000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004420000003efc0100000002fb0000000800540069006d00650100000000000004420000000000000000fb0000000800540069006d00650100000000000004500000000000000000000003280000043200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Tool Properties:
     collapsed: false
   Views:
-    collapsed: true
+    collapsed: false
   Width: 1560
   X: 1756
   Y: 185

@@ -23,7 +23,7 @@
   durability: volatile
   history: keep_last
   reliability: best_effort
-/cmd_vel_navigation:
+/cmd_vel_nav:
   depth: 1
   durability: volatile
   history: keep_last
@@ -239,6 +239,11 @@
   history: keep_last
   reliability: best_effort
 /waypoints:
+  depth: 1
+  durability: volatile
+  history: keep_last
+  reliability: best_effort
+/wheel_odom:
   depth: 1
   durability: volatile
   history: keep_last

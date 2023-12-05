@@ -8,6 +8,7 @@ ros2 bag play --qos-profile-overrides-path  /home/ros/raven_ws/install/raven_bas
 /local_costmap/costmap \
 /map \
 /odom \
+/odometry/filtered \
 /scan \
 /sonar0Sensor \
 /sonar1Sensor \
@@ -26,3 +27,4 @@ ros2 bag play --qos-profile-overrides-path  /home/ros/raven_ws/install/raven_bas
 /tof6Sensor \
 /tof7Sensor \
 /tofSensor \
+/wheel_odom \

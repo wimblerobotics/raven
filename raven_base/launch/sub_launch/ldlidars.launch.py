@@ -38,7 +38,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             name='range_threshold', 
-            default_value='0.005',
+            default_value='0.0508',
             description='Range Threshold'
         ),
         Node(
@@ -80,8 +80,8 @@ def generate_launch_description():
                     "angle_max": 3.14159,
                     "angle_increment": 0.013935472816228867,
                     "scan_time": 0.010,
-                    "range_min": 0.010,
-                    "range_max": 50.0
+                    "range_min": 0.0504,
+                    "range_max": 20.0
             }],
             # prefix=['xterm -e gdb run -ex --args'],
             # respawn=True,

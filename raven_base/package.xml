@@ -11,6 +11,7 @@
 
   <depend>geometry_msgs</depend>
   <depend>ira_laser_tools</depend>
+  <depend>robot_localization</depend>
   <depend>ldlidar</depend>
   <depend>nav_msgs</depend>
   <depend>rclcpp</depend>

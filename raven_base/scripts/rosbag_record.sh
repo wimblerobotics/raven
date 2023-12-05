@@ -1,12 +1,12 @@
 #! /usr/bin/bash
 #ros2 bag record --compression-mode file --compression-format zstd --qos-profile-overrides-path  /home/ros/puck_ws/src/puck/puck_base/scripts/qos.yaml \
-ros2 bag record --qos-profile-overrides-path  /home/ros/raven_ws/install/raven_base/share/raven_base/scripts/qos.yaml -o ~/bag \
+ros2 bag record --include-hidden-topics --qos-profile-overrides-path  /home/ros/raven_ws/install/raven_base/share/raven_base/scripts/qos.yaml -o ~/bag \
 /bluetoothJoystick \
 /clicked_point \
 /cmd_vel \
 /cmd_vel_joystick \
 /cmd_vel_keyboard \
-/cmd_vel_navigation \
+/cmd_vel_nav \
 /global_costmap/costmap \
 /goal_pose \
 /initialpose \
@@ -19,6 +19,7 @@ ros2 bag record --qos-profile-overrides-path  /home/ros/raven_ws/install/raven_b
 /map \
 /map_metadata \
 /odom \
+/odometry/filtered \
 /plan \
 /roboclaw_status \
 /robot_description \
@@ -45,4 +46,5 @@ ros2 bag record --qos-profile-overrides-path  /home/ros/raven_ws/install/raven_b
 /tof6Sensor \
 /tof7Sensor \
 /tofSensor \
-/waypoints 
+/waypoints \
+/wheel_odom
