@@ -1,0 +1,2 @@
+#ACTION="add",ATTR{idVendor}=="03eb",ATTR{idProduct}=="2404",SYMLINK+="roboclaw",MODE="0660",GROUP="dialout"
+ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="2404", MODE:="0666", SYMLINK+="roboclaw"

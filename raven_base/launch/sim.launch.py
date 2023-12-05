@@ -23,7 +23,7 @@ def generate_launch_description():
     print(f'DO_NAV2: {do_nav2}')
     print(f'DO_RVIZ: {do_rviz}')
 
-    param_dir = LaunchConfiguration(
+<    param_dir = LaunchConfiguration(
         'params_file',
         default=os.path.join(
             get_package_share_directory('raven_base'),
@@ -38,6 +38,20 @@ def generate_launch_description():
         'params_file',
         default_value=param_dir,
         description='Full path to param file to load'),
+    # # Bring up the T265 camera.
+    # t265_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         [common.raven_base_directory_path, '/launch/sub_launch/t265.launch.py']))
+    # common.ld.add_action(t265_launch)
+
+    # # Bring up the joystick.
+    # if do_joystick:
+    #     joystick_launch = IncludeLaunchDescription(
+    #         PythonLaunchDescriptionSource([
+    #             common.joystick_directory_path,
+    #             '/launch/raven_bluetooth_joystick.launch.py'
+    #         ]))
+    #     common.ld.add_action(joystick_launch)
 
     # # Bring up the T265 camera.
     # t265_launch = IncludeLaunchDescription(

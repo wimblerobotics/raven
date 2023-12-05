@@ -140,14 +140,11 @@
   </joint> -->
 
   <gazebo>
-    <plugin name='diff_drive_raven' filename='libgazebo_ros_diff_drive.so'>
+    <plugin name='diff_drive_controller' filename='libgazebo_ros_diff_drive.so'>
 
-      <!-- <ros>
-        <namespace>/simbot</namespace>
-        <remapping>cmd_vel:=/cmd_vel</remapping>
-        <remapping>odom:=/odom</remapping>
-
-      </ros> -->
+      <ros>
+        <argument>odom:=/odom</argument>
+      </ros>
 
       <!-- wheels -->
       <left_joint>front_left_wheel_joint</left_joint>
@@ -168,23 +165,9 @@
       <publish_odom_tf>true</publish_odom_tf>
       <publish_wheel_tf>true</publish_wheel_tf>
 
-      <odometry_frame>odom_frame</odometry_frame>
+      <odometry_frame>odom</odometry_frame>
       <robot_base_frame>base_footprint</robot_base_frame>
 
-    </plugin>
-    <plugin name="gazebo_ros_joint_state_publisher"
-      filename="libgazebo_ros_joint_state_publisher.so">
-      <ros>
-        <!-- Add a namespace -->
-        <namespace>/simbot</namespace>
-        <!-- Remap the default topic -->
-        <remapping>joint_states:=/base_wheel_joints</remapping>
-      </ros>
-      <!-- Update rate in Hertz -->
-      <update_rate>80</update_rate>
-      <!-- Name of joints in the model whose states will be published. -->
-      <joint_name>front_left_wheel_joint</joint_name>
-      <joint_name>front_right_wheel_joint</joint_name>
     </plugin>
   </gazebo>
 
