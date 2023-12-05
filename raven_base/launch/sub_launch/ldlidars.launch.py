@@ -41,19 +41,19 @@ def generate_launch_description():
             default_value='0.0508',
             description='Range Threshold'
         ),
-        Node(
-            package='ldlidar',
-            executable='ldlidar',
-            name='ldlidar_right_rear',
-            output='screen',
-            #prefix=['xterm -e gdb -ex run --args'],
-            parameters=[
-                {'serial_port': LaunchConfiguration("serial_port_right_rear")},
-                {'topic_name': LaunchConfiguration("topic_name_right_rear")},
-                {'lidar_frame': LaunchConfiguration("lidar_frame_right_rear")},
-                {'range_threshold': LaunchConfiguration("range_threshold")}
-            ]
-        ),
+        # Node(
+        #     package='ldlidar',
+        #     executable='ldlidar',
+        #     name='ldlidar_right_rear',
+        #     output='screen',
+        #     #prefix=['xterm -e gdb -ex run --args'],
+        #     parameters=[
+        #         {'serial_port': LaunchConfiguration("serial_port_right_rear")},
+        #         {'topic_name': LaunchConfiguration("topic_name_right_rear")},
+        #         {'lidar_frame': LaunchConfiguration("lidar_frame_right_rear")},
+        #         {'range_threshold': LaunchConfiguration("range_threshold")}
+        #     ]
+        # ),
         Node(
             package='ldlidar',
             executable='ldlidar',
@@ -75,7 +75,8 @@ def generate_launch_description():
                     "destination_frame": "base_link",
                     "cloud_destination_topic": "/merged_lidar_cloud",
                     "scan_destination_topic": "/scan",
-                    "laserscan_topics": "/scan_left_front /scan_right_rear",
+#                    "laserscan_topics": "/scan_left_front /scan_right_rear",
+                    "laserscan_topics": "/scan_left_front",
                     "angle_min": -3.14159,
                     "angle_max": 3.14159,
                     "angle_increment": 0.013935472816228867,
