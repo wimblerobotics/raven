@@ -1,54 +1,126 @@
 FROM ros2_iron_base AS base
 
+ARG DEBIAN_FRONTEND=noninteractive
+ARG OPENCV_VERSION=4.5.4
+
 ###
 # Opencv install
 ###
 
-RUN \
-    git clone https://github.com/opencv/opencv.git && \
-    git clone https://github.com/opencv/opencv_contrib.git
+RUN apt-get update && apt-get upgrade -y &&\
+    # Install build tools, build dependencies and python
+    apt-get install -y \
+	python3-pip \
+        build-essential \
+        cmake \
+        git \
+        wget \
+        unzip \
+        yasm \
+        pkg-config \
+        libswscale-dev \
+        libtbb2 \
+        libtbb-dev \
+        libjpeg-dev \
+        libpng-dev \
+        libtiff-dev \
+        libavformat-dev \
+        libpq-dev \
+        libxine2-dev \
+        libglew-dev \
+        libtiff5-dev \
+        zlib1g-dev \
+        libjpeg-dev \
+        libavcodec-dev \
+        libavformat-dev \
+        libavutil-dev \
+        libpostproc-dev \
+        libswscale-dev \
+        libeigen3-dev \
+        libtbb-dev \
+        libgtk2.0-dev \
+        pkg-config \
+        ## Python
+        python3-dev \
+        python3-numpy \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    libavcodec-dev \
-    libavformat-dev \
-    libswscale-dev \
-    # libgstreamer-plugins-base1.0-dev \
-    # libgstreamer1.0-dev \
-    libgtk-3-common \
-    libpng-dev \
-    libjpeg-dev \
-    libopenexr-dev \
-    libtiff-dev libwebp-dev && \
-    rm -rf /var/lib/apt/lists/* && apt autoremove && apt clean
-
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
-ENV NVIDIA_REQUIRE_CUDA "cuda>=8.0"
-
-RUN \
-    cd opencv && \
-    mkdir build && \
-    cd build && \
+RUN cd /opt/ &&\
+    # Download and unzip OpenCV and opencv_contrib and delte zip files
+    wget https://github.com/opencv/opencv/archive/$OPENCV_VERSION.zip &&\
+    unzip $OPENCV_VERSION.zip &&\
+    rm $OPENCV_VERSION.zip &&\
+    wget https://github.com/opencv/opencv_contrib/archive/$OPENCV_VERSION.zip &&\
+    unzip ${OPENCV_VERSION}.zip &&\
+    rm ${OPENCV_VERSION}.zip &&\
+    # Create build folder and switch to it
+    mkdir /opt/opencv-${OPENCV_VERSION}/build && cd /opt/opencv-${OPENCV_VERSION}/build &&\
+    # Cmake configure
     cmake \
-    -D CMAKE_BUILD_TYPE=RELEASE \
-    -D CMAKE_INSTALL_PREFIX=/usr/local \
-    -D WITH_CUDA=ON \
-    -D WITH_CUDNN=ON \
-    -D WITH_CUBLAS=ON \
-    -D WITH_TBB=ON \
-    -D OPENCV_DNN_CUDA=ON \
-    -D OPENCV_ENABLE_NONFREE=ON \
-    -D CUDA_ARCH_BIN=7.5 \
-    -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
-    -D BUILD_EXAMPLES=ON \
-    -D HAVE_opencv_python3=ON \
-    .. && \
-    make -j 12 && \
+        -D BUILD_EXAMPLES=ON \
+        -DOPENCV_EXTRA_MODULES_PATH=/opt/opencv_contrib-${OPENCV_VERSION}/modules \
+        -DWITH_CUDA=ON \
+        -D WITH_CUDNN=ON \
+        -D WITH_CUBLAS=ON \
+        -D OPENCV_DNN_CUDA=ON \
+        -DCUDA_ARCH_BIN=7.5,8.0,8.6 \
+        -DCMAKE_BUILD_TYPE=RELEASE \
+        # Install path will be /usr/local/lib (lib is implicit)
+        -DCMAKE_INSTALL_PREFIX=/usr/local \
+        .. &&\
+    # Make
+    make -j"$(nproc)" && \
+    # Install to /usr/local/lib
     make install && \
-    ldconfig 
-    # ls /usr/local && ls /usr/local/lib && ls /usr/local/lib/python3.8 && ls /usr/local/lib/python3.8/site-packages && ls /usr/local/lib/python3.8/site-packages/cv2 && \
-    # ls /usr/local/lib/python3.8/dist-packages && \
-    # ln -s /usr/local/lib/python3.8/site-packages/cv2 /usr/local/lib/python3.8/dist-packages/cv2
+    ldconfig &&\
+    # Remove OpenCV sources and build folder
+    rm -rf /opt/opencv-${OPENCV_VERSION} && rm -rf /opt/opencv_contrib-${OPENCV_VERSION}
 
-# COPY requirements.txt /usr/src/app/
-# RUN pip install --no-cache-dir -r requirements.txt
+# RUN \
+#     git clone https://github.com/opencv/opencv.git && \
+#     git clone https://github.com/opencv/opencv_contrib.git
+
+# RUN apt-get install -y \
+#     libavcodec-dev \
+#     libavformat-dev \
+#     libswscale-dev \
+#     # libgstreamer-plugins-base1.0-dev \
+#     # libgstreamer1.0-dev \
+#     libgtk-3-common \
+#     libpng-dev \
+#     libjpeg-dev \
+#     libopenexr-dev \
+#     libtiff-dev libwebp-dev && \
+#     rm -rf /var/lib/apt/lists/* && apt autoremove && apt clean
+
+# ENV NVIDIA_VISIBLE_DEVICES all
+# ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
+# ENV NVIDIA_REQUIRE_CUDA "cuda>=8.0"
+
+# RUN \
+#     cd opencv && \
+#     mkdir build && \
+#     cd build && \
+    # cmake \
+    # --D CMAKE_BUILD_TYPE=RELEASE \
+    # -D CMAKE_INSTALL_PREFIX=/usr/local \
+    # -D WITH_CUDA=ON \
+    # -D WITH_CUDNN=ON \
+    # -D WITH_CUBLAS=ON \
+    # -D WITH_TBB=ON \
+    # -D OPENCV_DNN_CUDA=ON \
+    # -D OPENCV_ENABLE_NONFREE=ON \
+    # -D CUDA_ARCH_BIN=7.5 \
+    # -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
+    # -D BUILD_EXAMPLES=ON \
+    # -D HAVE_opencv_python3=ON \
+    # .. && \
+    # make -j 12 && \
+#     make install && \
+#     ldconfig 
+#     # ls /usr/local && ls /usr/local/lib && ls /usr/local/lib/python3.8 && ls /usr/local/lib/python3.8/site-packages && ls /usr/local/lib/python3.8/site-packages/cv2 && \
+#     # ls /usr/local/lib/python3.8/dist-packages && \
+#     # ln -s /usr/local/lib/python3.8/site-packages/cv2 /usr/local/lib/python3.8/dist-packages/cv2
+
+# # COPY requirements.txt /usr/src/app/
+# # RUN pip install --no-cache-dir -r requirements.txt
